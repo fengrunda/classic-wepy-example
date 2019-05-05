@@ -1,0 +1,37 @@
+<template>
+  <view class="container">
+    
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import apiAction from '@/config/api.js'
+import { errorFormatter } from '@/config/utils.js'
+export default class Home extends wepy.page {
+  config = {
+    navigationBarTitleText: 'home'
+  }
+  components = {}
+
+  mixins = []
+
+  data = {}
+
+  computed = {}
+
+  methods = {}
+
+  events = {}
+
+  async onLoad () {
+    try {
+      await apiAction.getUserInfo()
+    } catch (error) {
+      console.log(errorFormatter(error, 'home onload'))
+    }
+  }
+}
+</script>
+<style lang="less">
+</style>

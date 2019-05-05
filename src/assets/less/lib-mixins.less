@@ -1,0 +1,97 @@
+// 非必要，可按需添加或删除
+
+// 按照缩放比例返回图片宽高变量
+.imgSize(@imgUrl, @scale:1) {
+  @imgW: unit(image-width(@imgUrl),px) * @scale;
+  @imgH: unit(image-height(@imgUrl),px) * @scale;
+}
+// 按照缩放比例返回背景图
+.bgImg(@imgUrl, @scale:1) {
+  @url: url("@{imgUrl}?scale=@{scale}");
+  @imgW: image-width(@imgUrl) * @scale;
+  @imgH: image-height(@imgUrl) * @scale;
+  @imgRatio :image-height(@imgUrl)/image-width(@imgUrl);
+  background-image: @url;
+  background-repeat: no-repeat;
+  background-size: @imgW @imgH;
+  width: @imgW;
+  height: @imgH;
+}
+// 图片绝对定位水平居中（一定要先获得图片宽高）
+.imgToMid(h) {
+  position: absolute;
+  left: 50%;
+  margin-left: -@imgW/2;
+}
+// 图片绝对定位垂直居中（一定要先获得图片宽高）
+.imgToMid(v) {
+  position: absolute;
+  top: 50%;
+  margin-top: -@imgH/2;
+}
+// 图片绝对定位水平垂直居中（一定要先获得图片宽高）
+.imgToMid(hv) {
+  position: absolute;
+  top: 50%;
+  margin-top: -@imgH/2;
+  left: 50%;
+  margin-left: -@imgW/2;
+}
+// 动画时长
+.duration(@second) {
+  animation-duration: @second;
+}
+// 动画延时
+.delay(@second) {
+  animation-delay: @second;
+}
+// 多行截取
+.line-clamp(@lines, @line-height:1.6em) {
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  /*! autoprefixer: off */
+  -webkit-box-orient: vertical;
+  /* autoprefixer: on */
+  -webkit-line-clamp: @lines; // number of lines to show
+  overflow: hidden;
+  line-height: @line-height;
+  max-height: @line-height * @lines;
+}
+// 一像素边线
+.scale-1px(@radius1:0px, @radius2:0px, @radius3:0px, @radius4:0px) {
+  position: relative;
+  border-width: 0;
+  border-radius: @radius1 @radius2 @radius3 @radius4;
+
+  .before(@dpr) {
+    &::before {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-style: inherit;
+      border-color: inherit;
+      border-width: 1px;
+      border-radius: @radius1*@dpr @radius2*@dpr @radius3*@dpr @radius4*@dpr;
+      box-sizing: border-box;
+      width: 100% * @dpr;
+      height: 100% * @dpr;
+      transform: scale(1 / @dpr);
+      transform-origin: left top;
+      z-index: 0;
+    }
+  }
+  @media only screen and (-webkit-device-pixel-ratio: 1) {
+     @dpr: 1;
+    border-width: 1px;
+  }
+  @media only screen and (-webkit-device-pixel-ratio: 2) {
+     @dpr: 2;
+    .before(@dpr);
+  }
+  @media only screen and (-webkit-device-pixel-ratio: 3) {
+     @dpr: 3;
+    .before(@dpr);
+  }
+}

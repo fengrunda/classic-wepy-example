@@ -1,0 +1,130 @@
+// 按需添加 命名规范请参考 https://docs.emmet.io/cheat-sheet/
+
+/*---------------------------------------------------布局 start -----------------------------------------------------*/
+.d-n {
+  display: none;
+}
+
+.d-b {
+  display: block;
+}
+
+.d-ib {
+  display: inline-block;
+}
+
+.mtLoop(@counter) when (@counter > 0) {
+  .mt-@{counter} {
+    margin-top: unit(@counter, px) !important;
+  }
+  .mtLoop(( @counter - 5));
+}
+.mtLoop(40);
+
+.ml-a {
+  margin-left: auto;
+}
+
+.mr-a {
+  margin-right: auto;
+}
+
+.pbLoop(@counter) when (@counter > 0) {
+  .pb-@{counter} {
+    padding-bottom: unit(@counter, px) !important;
+  }
+  .pbLoop(( @counter - 5));
+}
+.pbLoop(40);
+/*---------------------------------------------------布局 end -----------------------------------------------------*/
+/*---------------------------------------------------文本 start -----------------------------------------------------*/
+.wow-b {
+  word-wrap: break-word;
+}
+
+.whs-nw {
+  white-space: nowrap;
+}
+
+.ta-c {
+  text-align: center;
+}
+
+.ta-l {
+  text-align: left;
+}
+
+.ta-r {
+  text-align: right;
+}
+/*---------------------------------------------------文本 end -----------------------------------------------------*/
+/*---------------------------------------------------flex 容器 start -----------------------------------------------------*/
+.d-f {
+  display: flex;
+}
+
+.jc-fs {
+  justify-content: flex-start;
+}
+
+.jc-fe {
+  justify-content: flex-end;
+}
+
+.jc-c {
+  justify-content: center;
+}
+
+.jc-sa {
+  justify-content: space-around;
+}
+
+.jc-sb {
+  justify-content: space-between;
+}
+
+.ai-s {
+  align-items: stretch;
+}
+
+.ai-fs {
+  align-items: flex-start;
+}
+
+.ai-fe {
+  align-items: flex-end;
+}
+
+.ai-c {
+  align-items: center;
+}
+
+.fxw-w {
+  flex-wrap: wrap;
+}
+
+.fxd-c {
+  flex-direction: column;
+}
+/*---------------------------------------------------flex 容器 end -----------------------------------------------------*/
+/*---------------------------------------------------flex item start ---------------------------------------------------*/
+.fxb-a {
+  flex-basis: auto;
+}
+
+.fxg-0 {
+  flex-grow: 0;
+}
+
+.fxg-1 {
+  flex-grow: 1;
+}
+
+.fxsh-0 {
+  flex-shrink: 0;
+}
+
+.fxsh-1 {
+  flex-shrink: 1;
+}
+/*---------------------------------------------------flex item end ---------------------------------------------------*/
