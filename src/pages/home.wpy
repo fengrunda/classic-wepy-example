@@ -1,24 +1,44 @@
 <template>
   <view class="container">
-    
+    <text>{{i18n.translate(language,'home__btn-text_normal',[name])}}</text>
   </view>
 </template>
 
 <script>
 import wepy from 'wepy'
-import apiAction from '@/config/api.js'
-import { errorFormatter } from '@/config/utils.js'
+import { connect } from 'wepy-redux'
+import { initialLanguage } from '../store/actions'
+import apiAction from '../config/api.js'
+import { errorFormatter } from '../config/utils.js'
+import i18n from '../filters/i18n.wxs'
+@connect(
+  {
+    language (state) {
+      return state.i18n.language
+    }
+  },
+  {
+    initialLanguage
+  }
+)
 export default class Home extends wepy.page {
   config = {
     navigationBarTitleText: 'home'
   }
-  components = {}
+  wxs = {
+    i18n
+  }
+  components = {
+  }
 
   mixins = []
 
-  data = {}
+  data = {
+    name: 'aaa'
+  }
 
-  computed = {}
+  computed = {
+  }
 
   methods = {}
 
@@ -30,6 +50,10 @@ export default class Home extends wepy.page {
     } catch (error) {
       console.log(errorFormatter(error, 'home onload'))
     }
+    setTimeout(() => {
+      this.name = 'bbb'
+      this.$apply()
+    }, 3000)
   }
 }
 </script>

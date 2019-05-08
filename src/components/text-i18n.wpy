@@ -1,0 +1,66 @@
+<template>
+  <!-- <text>{{text}}</text> -->
+  <text>{{key}}</text>
+  <!-- <text>{{language}}</text> -->
+  <!-- <text>{{filters.translate(key,translator)}}</text> -->
+</template>
+<script>
+import wepy from 'wepy'
+import { connect } from 'wepy-redux'
+import { initialLanguage } from '../store/actions'
+import filters from '../filters/index.wxs'
+@connect(
+  {
+    language (state) {
+      return state.i18n.language
+    },
+    translator (state) {
+      return state.i18n.translator
+    }
+  },
+  {
+    initialLanguage
+  }
+)
+export default class TextI18n extends wepy.component {
+  // 用法请参考 http://i18njs.com/#fun_with_pluralisation
+  wxs = {
+    filters
+  }
+  data = {
+    text: 'a'
+  }
+  props = {
+    // 静态传值
+    key: {
+      type: String
+    },
+    pluralisation: {
+      type: Number,
+      default: -1
+    },
+    formatting: {
+    },
+    contexts: {
+      type: Object
+    }
+  }
+  methods = {}
+  // 监听器函数名必须跟需要被监听的data对象中的属性num同名，
+  // 其参数中的newValue为属性改变后的新值，oldValue为改变前的旧值
+  watch = {
+    key (newValue, oldValue) {
+      console.log('watch', newValue, oldValue, this)
+      // this.text = newValue(this.key)
+      // this.$apply()
+    }
+  }
+  created () {
+    try {
+      console.log(this)
+      this.text = this.translator(this.key, this.formatting, this.contexts)
+      this.$apply()
+    } catch (error) { }
+  }
+}
+</script>

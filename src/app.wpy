@@ -1,24 +1,11 @@
-<style lang="less">
-.container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-}
-</style>
-
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
-
-// import { setStore } from 'wepy-redux'
-// import configStore from './store'
-
-// const store = configStore()
-// setStore(store)
-
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+import { initialLanguage } from './store/actions'
+const store = configStore()
+setStore(store)
 export default class extends wepy.app {
   config = {
     pages: [
@@ -43,7 +30,33 @@ export default class extends wepy.app {
     this.use('promisify') // wepy项目中使用Promise
   }
 
-  onLaunch() {
+  // async onLaunch () {
+  //   console.log('app', this)
+  // }
+  onShow () {
+    try {
+      // 获取系统信息
+      const res = wepy.getSystemInfoSync()
+      console.log(res)
+      // 初始化语言库
+      store.dispatch(initialLanguage(res.language))
+      setTimeout(() => {
+        store.dispatch(initialLanguage('en'))
+      }, 3000)
+    } catch (e) {
+      // Do something when catch error
+    }
   }
 }
 </script>
+
+<style lang="less">
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+</style>

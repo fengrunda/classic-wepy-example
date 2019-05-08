@@ -1,0 +1,1 @@
+export const INITIAL_LANGUAGE = 'INITIAL_LANGUAGE'
