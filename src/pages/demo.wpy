@@ -1,0 +1,152 @@
+<template>
+  <div class="container">
+    <view class="form-group__item border_b d-b pl-30 pr-30">
+      <text class="form-group__item__text form-group__item__label d-b fxg-0 fxsh-0 mr-20">openId</text>
+      <view class="d-b">
+        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{openId}}" />
+      </view>
+    </view>
+    <view class="form-group__item border_b d-b pl-30 pr-30">
+      <text class="form-group__item__text form-group__item__label d-b fxg-0 fxsh-0 mr-20">UnionId</text>
+      <view class="d-b">
+        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{unionId}}" />
+      </view>
+    </view>
+    <view class="form-group__item border_b d-b pl-30 pr-30">
+      <text class="form-group__item__text form-group__item__label d-b fxg-0 fxsh-0 mr-20">accessToken</text>
+      <view class="d-b">
+        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{accessToken}}" />
+      </view>
+    </view>
+    <view class="form-group__item border_b d-b pl-30 pr-30">
+      <text class="form-group__item__text form-group__item__label d-b fxg-0 fxsh-0 mr-20">thirdSession</text>
+      <view class="d-b">
+        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{thirdSession}}" />
+      </view>
+    </view>
+    <button class="d-b" bindtap="getCode">getCode</button>
+    <view class="form-group__item border_b d-f pl-30 pr-30">
+      <text class="form-group__item__text form-group__item__label d-ib fxg-0 fxsh-0 mr-20">code</text>
+      <view class="fxg-1 fxsh-1 d-f ai-c">
+        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{code}}" />
+      </view>
+    </view>
+    <view class="btn-bar_b padding">
+      <button bindtap="goToHome" class="btn-bar_b__btn bdrs-8 blue">返回首页</button>
+    </view>
+    <!-- <view class="form-container pos-r">
+      <form report-submit="{{true}}" catchsubmit="formSubmit2" class="pos-us">
+        <button bindtap="clickBtn" data-index="1" class="d-b btn pos-r" formType="submit">
+          <button bindtap="clickBtn" data-index="2" class="d-b btn pos-r" formType="submit">
+            <button bindtap="clickBtn" data-index="3" class="d-b btn pos-r" formType="submit">
+              <button bindtap="clickBtn" data-index="4" class="d-b last pos-a t-0 l-0 r-0 b-0" formType="submit">
+                getFormId*4
+              </button>
+            </button>
+          </button>
+        </button>
+      </form>
+    </view>
+    <view wx:for="{{formIdList}}" wx:key="{{index}}" class="form-group__item border_b d-f pl-30 pr-30">
+      <text class="form-group__item__text form-group__item__label d-ib fxg-0 fxsh-0 mr-20">formId{{index}}</text>
+      <view class="fxg-1 fxsh-1 d-f ai-c">
+        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{item}}" />
+      </view>
+    </view> -->
+  </div>
+</template>
+<config>
+{
+  navigationBarTitleText: 'WePY 2.0 Feature Demo',
+  // usingComponents: {}
+}
+</config>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import initPage from '@/mixins/initPage.js'
+// import apiActions from '@/config/api.js'
+import { mapState, mapActions } from '@wepy/x'
+import { translate } from '../i18n'
+import { errorFormatter } from '@/config/utils.js'
+wepy.page({
+  store,
+  mixins: [initPage],
+  data: {
+    code: '',
+    formId: '',
+    formIdList: []
+  },
+  computed: {
+    ...mapState({
+      openId: state => state.user.openId,
+      unionId: state => state.user.unionId
+    }),
+    navTitle () {
+      let navTitle = translate(this.language)('home__btn-text_normal', { name: 'aaa' }) || ''
+      wx.setNavigationBarTitle({ title: navTitle })
+      return navTitle
+    }
+  },
+  methods: {
+    ...mapActions({
+      spliceFormId: 'spliceFormId'
+    }),
+    async getCode () {
+      try {
+        const { code = '' } = await wepy.wx.login() || {}
+        this.code = code
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    formSubmit (e) {
+      this.formId = e.$wx.detail.formId
+      console.log(e)
+    },
+    formSubmit2 (e) {
+      this.formIdList.push(e.$wx.detail.formId)
+      console.log('formSubmit2', e.$wx.detail.formId)
+    },
+    clickBtn (e) {
+      console.log('index', e)
+      const query = wx.createSelectorQuery()
+      query.select()
+    }
+  },
+  async onLoad () {
+    this.spliceFormId({ formId: 'asdfasdfasdf' })
+    this.spliceFormId({ formId: '45623456345634' })
+    this.spliceFormId({ index: 1, deleteCount: 1 })
+    wx.showLoading({ title: '正在加载...', mask: true })
+    try {
+      await this.autoLogin()
+      wx.hideLoading()
+    } catch (error) {
+      wx.hideLoading()
+      wx.showToast({ duration: 3000, title: errorFormatter(error, 'home onload'), icon: 'none' })
+    }
+  }
+})
+</script>  
+<style lang="less">
+.form-container {
+  height: 100rpx;
+}
+.btn {
+  // position: absolute;
+  width: 0;
+  height: 0;
+  background-color: rgba(97, 73, 73, 0.301);
+  overflow: visible;
+  padding: 0;
+}
+.last {
+  width: 500rpx;
+  height: 100rpx;
+  background-color: rgba(97, 73, 73, 0.301);
+  overflow: visible;
+  padding: 0;
+  // padding: 20rpx;
+}
+</style> 

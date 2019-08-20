@@ -1,0 +1,43 @@
+/**
+ * 金额格式化
+ * @param {*} amount 金额
+ */
+var formatAmount = function (amount) {
+  // console.log(amount, parseFloat(amount), parseFloat(amount).toLocaleString())
+  return parseFloat(amount).toLocaleString()
+}
+/**
+ * 翻译订单状态物业缴费
+ * @param {*} source 状态
+ */
+var billStatusPayment = function (source) {
+  // console.log(amount, parseFloat(amount), parseFloat(amount).toLocaleString())
+  if (!source && source !== 0) {
+    return '-'
+  }
+  switch (parseInt(source)) {
+    case 1: return '待支付'
+    case 2: return '支付成功'
+    case 6: return '已失效'
+    case 7: return '已取消'
+    default: return source
+  }
+}
+/**
+ * 高亮关键字
+ * @param {*} text 原文
+ * @param {*} keyword 关键字
+ */
+var highlightWords = function (text, keyword) {
+  if (keyword) {
+    var wxml = '<span class="color_text-blue">' + keyword + '</span>'
+    return text.replace(keyword, wxml)
+  }
+  return text
+}
+
+module.exports = {
+  formatAmount: formatAmount,
+  billStatusPayment: billStatusPayment,
+  highlightWords: highlightWords
+}

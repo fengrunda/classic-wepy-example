@@ -8,6 +8,6 @@
   },
   "compileType": "miniprogram",
   "appid": "touristappid",
-  "projectname": "classic-wepy-example",
-  "miniprogramRoot": "./dist"
+  "projectname": "base-service-wxapp",
+  "miniprogramRoot": "./weapp"
 }

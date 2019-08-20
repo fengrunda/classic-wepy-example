@@ -1,61 +1,337 @@
 <template>
-  <view class="container">
-    <text>{{i18n.translate(language,'home__btn-text_normal',[name])}}</text>
+  <view class="main-wrapper home pb-116">
+    <image class="home__bg-leaf pos-f l-0 t-0" src="@/assets/images/bg_home_leaf.jpg"></image>
+    <view class="home__header-title pos-r ta-c" style="{{'margin-top:'+ statusBarHeight +'px;'}}">{{i18n.translate(language,'home__header-title')}}</view>
+    <!-- <view class="home__header pos-f l-0 t-0 r-0" style="{{'padding-top:'+ statusBarHeight +'px;'}}">
+      <image class="home__bg-leaf pos-a l-0 t-0" src="@/assets/images/bg_home_leaf.png"></image>
+      <div class="home__header__title">自在社区享家</div>
+    </view> -->
+    <image class="home__banner pos-r d-b mt-30 ml-a mr-a" src="@/assets/images/banner_home.png"></image>
+    <view class="d-b pos-r mt-10">
+      <form report-submit="{{true}}" bindsubmit="collectFormId" class="home__module d-b pt-30 pb-30">
+        <text class="home__module__title mr-40 ml-40 d-f ai-c">{{i18n.translate(language,'home__module__title_community-service')}}</text>
+        <view class="d-f fxw-w jc-fs">
+          <button bindtap="navToPage" class="home__module__feature d-f fxd-c ai-c mt-30 pl-10 pr-10" data-url="/subPackages/repair/orderType" formType="submit">
+            <image class="home__module__feature__icon" src="@/assets/images/icon_home_repair.png"></image>
+            <text class="home__module__feature__name d-b mt-10 ta-c">{{i18n.translate(language,'home__module__feature__name_base-repair')}}</text>
+          </button>
+          <button bindtap="navToPage" class="home__module__feature d-f fxd-c ai-c mt-30 pl-10 pr-10" data-url="/subPackages/payment/communityList" formType="submit" wx:if="{{isZh}}">
+            <image class="home__module__feature__icon" src="@/assets/images/icon_home_payment.png" wx:if="{{isZhForImg}}"></image>
+            <view class="home__module__feature__icon" wx:else></view>
+            <text class="home__module__feature__name d-b mt-10 ta-c">{{i18n.translate(language,'home__module__feature__name_base-payment')}}</text>
+          </button>
+          <view class="home__module__feature d-f fxd-c ai-c mt-30 pl-10 pr-10" wx:else>
+            <image class="home__module__feature__icon home__module__feature__icon_disable" src="@/assets/images/icon_home_payment.png" wx:if="{{!isZhForImg}}"></image>
+            <view class="home__module__feature__icon" wx:else></view>
+            <text class="home__module__feature__name d-b mt-10 ta-c">{{i18n.translate(language,'home__module__feature__name_base-payment_comming-soon')}}</text>
+          </view>
+          <view class="home__module__feature d-f fxd-c ai-c mt-30 pl-10 pr-10"></view>
+        </view>
+      </form>
+      <block wx:if="{{isZh}}">
+        <view class="border_b d-b ml-40 mr-40"></view>
+        <view class="home__module pt-30 pb-30">
+          <text class="home__module__title mr-40 ml-40 d-f ai-c">{{i18n.translate(language,'home__module__title_intelligent-service')}}</text>
+          <view class="d-f fxw-w jc-fs">
+            <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="visit" class="home__module__feature d-f fxd-c ai-c mt-30 pl-10 pr-10">
+              <image class="home__module__feature__icon" src="@/assets/images/icon_home_visit.png" wx:if="{{isZhForImg}}"></image>
+              <view class="home__module__feature__icon" wx:else></view>
+              <text class="home__module__feature__name d-b mt-10 ta-c">{{i18n.translate(language,'home__module__feature__name_intelligent-visit')}}</text>
+            </button>
+            <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="carpark" class="home__module__feature d-f fxd-c ai-c mt-30 pl-10 pr-10">
+              <image class="home__module__feature__icon" src="@/assets/images/icon_home_carpark.png" wx:if="{{isZhForImg}}"></image>
+              <view class="home__module__feature__icon" wx:else></view>
+              <text class="home__module__feature__name d-b mt-10 ta-c">{{i18n.translate(language,'home__module__feature__name_intelligent-carpark')}}</text>
+            </button>
+            <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="charge" class="home__module__feature d-f fxd-c ai-c mt-30 pl-10 pr-10">
+              <image class="home__module__feature__icon" src="@/assets/images/icon_home_charge.png" wx:if="{{isZhForImg}}"></image>
+              <view class="home__module__feature__icon" wx:else></view>
+              <text class="home__module__feature__name d-b mt-10 ta-c">{{i18n.translate(language,'home__module__feature__name_intelligent-charge')}}</text>
+            </button>
+            <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="RKE" class="home__module__feature d-f fxd-c ai-c mt-30 pl-10 pr-10" wx:if="{{showRKE}}">
+              <image class="home__module__feature__icon" src="@/assets/images/icon_home_RKE.png" wx:if="{{isZhForImg}}"></image>
+              <view class="home__module__feature__icon" wx:else></view>
+              <text class="home__module__feature__name d-b mt-10 ta-c">{{i18n.translate(language,'home__module__feature__name_intelligent-RKE')}}</text>
+            </button>
+            <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="face" class="home__module__feature d-f fxd-c ai-c mt-30 pl-10 pr-10" wx:if="{{showFace}}">
+              <image class="home__module__feature__icon" src="@/assets/images/icon_home_face.png" wx:if="{{isZhForImg}}"></image>
+              <view class="home__module__feature__icon" wx:else></view>
+              <text class="home__module__feature__name d-b mt-10 ta-c">{{i18n.translate(language,'home__module__feature__name_intelligent-face')}}</text>
+            </button>
+            <view class="home__module__feature d-f fxd-c ai-c mt-30 pl-10 pr-10"></view>
+          </view>
+        </view>
+        <view class="border_b d-b ml-0 mr-0"></view>
+        <button bindtap="navToMiniProgram" data-sapp-type="store" data-path-type="home" class="home__module_store d-f ai-c pt-30 pb-30 pl-40 pr-40">
+          <image class="home__module_store__icon fxg-0 fxsh-0" src="@/assets/images/icon_store.jpg" wx:if="{{isZhForImg}}"></image>
+          <view class="home__module__feature__icon" wx:else></view>
+          <view class="fxg-1 fxsh-1 mr-30 ml-30">
+            <text class="home__module_store__title d-b ta-l">{{i18n.translate(language,'home__module_store__title')}}</text>
+            <text class="home__module_store__desc d-b mt-10 ta-l">{{i18n.translate(language,'home__module_store__desc')}}</text>
+          </view>
+          <view class="icon-arrow_right fxg-0 fxsh-0"></view>
+        </button>
+      </block>
+    </view>
+    <tabBar></tabBar>
+    <!-- <cover-view class="mask">
+      <cover-image class="mask__icon-dashed" src="@/assets/images/icon_guide_dashed.png"></cover-image> 
+      <cover-view class="mask__hint d-f ai-c">
+        <cover-image class="mask__hint__icon mr-10 fxg-0 fxsh-0" src="@/assets/images/icon_guide_change_lang.png"></cover-image>
+        <cover-view class="mask__hint__text fxg-1 fxsh-1">文案文案文案文案文案文案文案文案文案文案文案文案</cover-view>
+      </cover-view>
+    </cover-view> -->
+    <block wx:if="{{enableShowGuide}}">
+      <view bindtap="disableShowGuide" class="mask">
+        <image class="mask__icon-dashed" src="@/assets/images/icon_guide_dashed.png"></image>
+        <view class="mask__hint d-f ai-c">
+          <image class="mask__hint__icon mr-10 fxg-0 fxsh-0" src="@/assets/images/icon_guide_change_lang.png"></image>
+          <view class="mask__hint__text fxg-1 fxsh-1">{{i18n.translate(language,'mask__hint__text')}}</view>
+        </view>
+      </view>
+      <view bindtap="disableShowGuide" class="mask_safe-area"></view>
+    </block>
   </view>
 </template>
-
-<script>
-import wepy from 'wepy'
-import { connect } from 'wepy-redux'
-import { initialLanguage } from '../store/actions'
-import apiAction from '../config/api.js'
-import { errorFormatter } from '../config/utils.js'
-import i18n from '../filters/i18n.wxs'
-@connect(
-  {
-    language (state) {
-      return state.i18n.language
-    }
-  },
-  {
-    initialLanguage
-  }
-)
-export default class Home extends wepy.page {
-  config = {
-    navigationBarTitleText: 'home'
-  }
-  wxs = {
-    i18n
-  }
-  components = {
-  }
-
-  mixins = []
-
-  data = {
-    name: 'aaa'
-  }
-
-  computed = {
-  }
-
-  methods = {}
-
-  events = {}
-
-  async onLoad () {
-    try {
-      await apiAction.getUserInfo()
-    } catch (error) {
-      console.log(errorFormatter(error, 'home onload'))
-    }
-    setTimeout(() => {
-      this.name = 'bbb'
-      this.$apply()
-    }, 3000)
+<wxs module="i18n" src="../i18n/index.wxs"></wxs>
+<config>
+{
+  navigationBarTitleText: '自在社区享家',
+  navigationStyle: 'custom',
+  usingComponents: {
+    tabBar: '~@/components/tabBar',
+    customTabBar: '~@/custom-tab-bar/index'
   }
 }
+</config>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import { mapState, mapActions } from '@wepy/x'
+import initPage from '@/mixins/initPage.js'
+import apiActions from '@/config/api.js'
+import crossNav from '@/config/crossNav.js'
+import { translate } from '../i18n'
+import { errorFormatter } from '@/config/utils.js'
+// import eventHub from '@/config/eventHub.js'
+wepy.page({
+  store,
+  mixins: [initPage],
+  data: {
+    // statusBarHeight: 20,
+    // clientRect: {}
+    isZhForImg: !!store.state.i18n.language.toLowerCase().match('zh'),
+    showRKE: false,
+    showFace: false
+  },
+  computed: {
+    ...mapState({
+      statusBarHeight: state => state.system.statusBarHeight || 20,
+      buildType: state => state.buildType,
+      enableShowGuide: state => state.user.enableShowGuide,
+      safeArea: state => state.system.safeArea || {}
+    }),
+    navTitle () {
+      let navTitle = translate(this.language)('home__title') || ''
+      // try {
+      //   wx.setTabBarItem({ index: 0, text: translate(this.language)('app__tabbar__item-0') })
+      //   wx.setTabBarItem({ index: 1, text: translate(this.language)('app__tabbar__item-1') })
+      // } catch (error) {
+      //   // console.error(error)
+      // }
+      wx.setNavigationBarTitle({ title: navTitle })
+      return navTitle
+    },
+    isZh () {
+      return !!this.language.toLowerCase().match('zh')
+      // return !!this.flag
+    }
+  },
+  methods: {
+    ...mapActions({
+      disableShowGuide: 'disableShowGuide'
+    }),
+    async navToMiniProgram (e) {
+      const { sappType = '', pathType = '' } = e.currentTarget.dataset || {}
+      try {
+        await wepy.wx.navigateToMiniProgram({
+          appId: crossNav[sappType].appId,
+          path: crossNav[sappType].paths[pathType],
+          extraData: {
+            accessToken: this.accessToken
+          },
+          envVersion: 'trial' // develop trial release
+        })
+        // console.log(res)
+      } catch (error) {
+        // console.log(error)
+      }
+    },
+    async navToPage (e) {
+      const { url } = e.$wx.currentTarget.dataset
+      try {
+        await wepy.wx.navigateTo({ url })
+      } catch (e) { }
+    },
+    async collectFormId (e) {
+      const formId = e.$wx.detail.formId
+      // console.log('collectFormId', formId)
+      this.spliceFormId({ formId })
+    }
+  },
+  async onShow () {
+    this.isZhForImg = this.isZh
+    wx.showLoading({ title: '正在加载...', mask: true })
+    try {
+      await this.autoLogin(false)
+      wx.hideLoading()
+    } catch (error) {
+      console.error('home onShow', error)
+      wx.hideLoading()
+      wx.showToast({ duration: 3000, title: errorFormatter(error, 'home onload'), icon: 'none' })
+    }
+    if (this.accessToken) {
+      try {
+        const { data: deviceList = [] } = await apiActions.carpark.getGuardDeviceList({ params: { type: 1, access_token: this.accessToken } }) || {}
+        this.showRKE = deviceList.find(device => (this.buildType === 'test' ? 118 : 1) === device.communityId) || false
+        const { data: showFace = false } = await apiActions.carpark.checkFacePermission({ params: { access_token: this.accessToken } }) || {}
+        this.showFace = showFace
+      } catch (error) { }
+    }
+  }
+})
 </script>
 <style lang="less">
+@import '~@/assets/less/lib-base.less';
+@import '~@/assets/less/lib-mixins.less';
+.home__bg-leaf {
+  width: 238rpx;
+  height: 98rpx;
+  z-index: -1;
+}
+// .home__header {
+//   height: 44px;
+//   background-color: rgba(100, 173, 145, 0.445);
+//   z-index: 99;
+// }
+.home__header-title {
+  height: 44px;
+  line-height: 44px;
+  margin-top: 52rpx;
+  font-size: 18px;
+  font-weight: bold;
+}
+.home__banner {
+  width: 670rpx;
+  height: 354rpx;
+}
+.home__module__title {
+  font-size: 32rpx;
+  font-weight: bold;
+  &::before {
+    display: inline-block;
+    content: '';
+    width: 6rpx;
+    height: 6rpx;
+    background-color: @c_main_blue;
+    margin-right: 34rpx;
+  }
+}
+.home__module__feature {
+  width: 33%;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+.home__module__feature__icon {
+  width: 80rpx;
+  height: 80rpx;
+}
+.home__module__feature__icon_disable {
+  filter: grayscale(100%);
+}
+.home__module__feature__name {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 36rpx;
+}
+.home__module_store {
+  background-color: transparent;
+  &.button-hover {
+    filter: none;
+  }
+}
+.home__module_store__icon {
+  width: 162rpx;
+  height: 138rpx;
+}
+.home__module_store__title {
+  font-size: 32rpx;
+  font-weight: bold;
+  line-height: 36rpx;
+  color: #333;
+}
+.home__module_store__desc {
+  font-size: 24rpx;
+  line-height: 36rpx;
+  color: #666;
+}
+.mask {
+  background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  bottom: constant(safe-area-inset-bottom);
+  bottom: env(safe-area-inset-bottom);
+  z-index: 99999;
+  mask-image: radial-gradient(
+    circle at 75% calc(~'100% - 24px'),
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 24px,
+    rgba(255, 0, 0, 1) 24px,
+    rgba(255, 0, 0, 1) 100%
+  );
+}
+.mask_safe-area {
+  background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0;
+  height: constant(safe-area-inset-bottom);
+  height: env(safe-area-inset-bottom);
+  z-index: 99999;
+}
+.mask__icon-dashed {
+  .imgSize('../images/icon_guide_dashed.png');
+  width: @imgW;
+  height: @imgH;
+  position: absolute;
+  bottom: 50px;
+  right: 25%;
+}
+.mask__hint {
+  .imgSize('../images/icon_guide_dashed.png');
+  position: absolute;
+  right: 25%;
+  bottom: 50px;
+  margin-bottom: @imgH;
+  margin-right: @imgW;
+  transform: translateX(50%);
+  // max-width: 400rpx;
+  overflow: visible;
+}
+.mask__hint__text {
+  color: #fff;
+  font-size: 28rpx;
+  white-space: normal;
+  overflow: visible;
+}
+.mask__hint__icon {
+  .imgSize('../images/icon_guide_change_lang.png');
+  width: @imgW;
+  height: @imgH;
+}
 </style>

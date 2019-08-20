@@ -1,62 +1,58 @@
+<config>
+{
+  pages: [
+    'pages/home',
+    'pages/user',
+    'pages/webveiw',
+  ],
+  subPackages: [], // 分包目录
+  tabBar: {
+    "custom": true,
+    "color": "#333",
+    "selectedColor": "#41a3ff",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [ 
+      {
+        "pagePath": "pages/home",
+        "iconPath": "/statics/images/icon_index_home_gray.png",
+        "selectedIconPath": "/statics/images/icon_index_home_blue.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/user",
+        "iconPath": "/statics/images/icon_index_my_gray.png",
+        "selectedIconPath": "/statics/images/icon_index_my_blue.png",
+        "text": "我的"
+      }
+    ]
+  },
+  window: {
+    backgroundTextStyle: 'dark',
+    navigationBarBackgroundColor: '#fff',
+    navigationBarTitleText: '自在社区享家',
+    navigationBarTextStyle: 'black'
+  },
+  navigateToMiniProgramAppIdList: [] // 需要调整到其他小程序的appId列表
+}
+</config>
 <script>
-import wepy from 'wepy'
-import 'wepy-async-function'
-import { setStore } from 'wepy-redux'
-import configStore from './store'
-import { initialLanguage } from './store/actions'
-const store = configStore()
-setStore(store)
-export default class extends wepy.app {
-  config = {
-    pages: [
-      'pages/home'
-      // 'pages/index'
-    ],
-    window: {
-      backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
-    }
-  }
-
-  globalData = {
-    userInfo: null
-  }
-
-  constructor () {
-    super()
-    this.use('requestfix')
-    this.use('promisify') // wepy项目中使用Promise
-  }
-
-  // async onLaunch () {
-  //   console.log('app', this)
-  // }
-  onShow () {
-    try {
-      // 获取系统信息
-      const res = wepy.getSystemInfoSync()
-      console.log(res)
-      // 初始化语言库
-      store.dispatch(initialLanguage(res.language))
-      setTimeout(() => {
-        store.dispatch(initialLanguage('en'))
-      }, 3000)
-    } catch (e) {
-      // Do something when catch error
-    }
-  }
-}
+import wepy from '@wepy/core'
+import store from './store'
+import promisify from '@wepy/use-promisify'
+wepy.use(promisify)
+wepy.app({
+  hooks: {
+  },
+  async onShow (options) {
+    // 获取其他小程序或app跳转过来带的accessToken
+    const { referrerInfo: { extraData = {} } = {} } = options || {}
+  },
+  methods: {}
+})
 </script>
-
 <style lang="less">
-.container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-}
+@import '~@/assets/less/lib-reset.less';
+@import '~@/assets/less/lib-ui.less';
+@import '~@/assets/less/style.less';
 </style>

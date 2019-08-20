@@ -2,14 +2,14 @@
 
 // 按照缩放比例返回图片宽高变量
 .imgSize(@imgUrl, @scale:1) {
-  @imgW: unit(image-width(@imgUrl),px) * @scale;
-  @imgH: unit(image-height(@imgUrl),px) * @scale;
+  @imgW: unit(image-width(@imgUrl),rpx) * @scale;
+  @imgH: unit(image-height(@imgUrl),rpx) * @scale;
 }
 // 按照缩放比例返回背景图
 .bgImg(@imgUrl, @scale:1) {
   @url: url("@{imgUrl}?scale=@{scale}");
-  @imgW: image-width(@imgUrl) * @scale;
-  @imgH: image-height(@imgUrl) * @scale;
+  @imgW: unit(image-width(@imgUrl),rpx) * @scale;
+  @imgH: unit(image-height(@imgUrl),rpx) * @scale;
   @imgRatio :image-height(@imgUrl)/image-width(@imgUrl);
   background-image: @url;
   background-repeat: no-repeat;
@@ -58,7 +58,7 @@
   max-height: @line-height * @lines;
 }
 // 一像素边线
-.scale-1px(@radius1:0px, @radius2:0px, @radius3:0px, @radius4:0px) {
+.scale-1rpx(@radius1:0rpx, @radius2:0rpx, @radius3:0rpx, @radius4:0rpx) {
   position: relative;
   border-width: 0;
   border-radius: @radius1 @radius2 @radius3 @radius4;
@@ -72,7 +72,7 @@
       left: 0;
       border-style: inherit;
       border-color: inherit;
-      border-width: 1px;
+      border-width: 1rpx;
       border-radius: @radius1*@dpr @radius2*@dpr @radius3*@dpr @radius4*@dpr;
       box-sizing: border-box;
       width: 100% * @dpr;
@@ -84,7 +84,7 @@
   }
   @media only screen and (-webkit-device-pixel-ratio: 1) {
      @dpr: 1;
-    border-width: 1px;
+    border-width: 1rpx;
   }
   @media only screen and (-webkit-device-pixel-ratio: 2) {
      @dpr: 2;

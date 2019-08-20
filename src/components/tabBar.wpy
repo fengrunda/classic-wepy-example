@@ -1,0 +1,135 @@
+<template>
+  <!-- <cover-view class="tab-bar">
+    <cover-view class="tab-bar-border"></cover-view>
+    <cover-view wx:for="{{list}}" wx:key="index" class="tab-bar-item" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab">
+      <cover-image src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></cover-image>
+      <cover-view style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</cover-view>
+    </cover-view>
+  </cover-view> -->
+  <view class="tab-bar">
+    <view class="tab-bar-border"></view>
+    <view wx:for="{{list}}" wx:key="index" class="tab-bar-item" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab">
+      <image src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></image>
+      <view style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import { translate } from '@/i18n'
+import { mapState } from '@wepy/x'
+wepy.component({
+  store,
+  options: {
+    styleIsolation: 'apply-shared'
+  },
+  data: {
+    selected: -1,
+    color: '#333',
+    selectedColor: '#41a3ff',
+    list: [
+      {
+        'pagePath': '/pages/home',
+        'iconPath': '/statics/images/icon_index_home_gray.png',
+        'selectedIconPath': '/statics/images/icon_index_home_blue.png',
+        'text': '首页'
+      },
+      {
+        'pagePath': '/pages/user',
+        'iconPath': '/statics/images/icon_index_my_gray.png',
+        'selectedIconPath': '/statics/images/icon_index_my_blue.png',
+        'text': '我的'
+      }
+    ]
+  },
+  computed: {
+    ...mapState({
+      route: state => '/' + state.page.route,
+      language: state => state.i18n.language
+    }),
+    selected: {
+      get () {
+        let index = this.list.findIndex(item => item.pagePath === this.route) || 0
+        // console.log('get selected', index, this.route)
+        // this.$wx.setData({
+        //   selected: index
+        // })
+        try {
+          this.list[0].text = translate(this.language)('app__tabbar__item-0')
+          this.list[1].text = translate(this.language)('app__tabbar__item-1')
+        } catch (error) {
+          // console.error(error)
+        }
+        return index
+      },
+      set (value) {
+        // console.log('set selected', value)
+        // this.$wx.setData({
+        //   selected: value
+        // })
+      }
+    }
+  },
+  methods: {
+    switchTab (e) {
+      // console.log('tabbar switchTab', e, this)
+      const data = e.currentTarget.dataset
+      const url = data.path
+      wepy.wx.switchTab({ url })
+      this.selected = data.index
+      // this.$wx.setData({
+      //   selected: data.index
+      // })
+    }
+  },
+  attached () {
+    // console.log('tabbar attached')
+  }
+})
+</script>
+<style lang="less">
+@import '~@/assets/less/lib-base.less';
+@import '~@/assets/less/lib-mixins.less';
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: white;
+  display: flex;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 100;
+}
+
+.tab-bar-border {
+  background-color: rgba(0, 0, 0, 0.33);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  transform: scaleY(0.5);
+}
+
+.tab-bar-item {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.tab-bar-item cover-image,.tab-bar-item image {
+  width: 27px;
+  height: 27px;
+}
+
+.tab-bar-item cover-view,.tab-bar-item view {
+  // margin-top: 1px;
+  font-size: 10px;
+}
+</style>

@@ -1,0 +1,122 @@
+<template>
+  <view class="nav-custom" style="{{'top:'+ clientRect.top +'px'}}" wx:if="{{visible}}">
+    <button class="nav-custom__btn" bindtap="handleNavigate">
+      <view class="icon-back"></view>
+    </button>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core'
+// import store from '@/store'
+wepy.component({
+  // store,
+  options: {
+    styleIsolation: 'apply-shared'
+  },
+  props: {
+    // webViewRedirectUrl: {
+    //   type: String,
+    //   default: ''
+    // },
+    // redirectUrl: {
+    //   type: String,
+    //   default: ''
+    // },
+    // webviewLogin: {
+    //   type: String,
+    //   default: ''
+    // }
+  },
+  data: {
+    clientRect: {}
+    // visible: false
+  },
+  computed: {
+    visible () {
+      let flag = false
+      try {
+        // eslint-disable-next-line no-undef
+        const pages = getCurrentPages()
+        flag = pages.length > 0
+        // console.log('getCurrentPages pages', pages)
+      } catch (error) {
+        // console.log('getCurrentPages', error)
+      }
+      return flag
+    }
+  },
+  methods: {
+    async handleNavigate (e) {
+      const { webViewRedirectUrl, redirectUrl, webviewLogin, backToWebView = '0' } = this.$parent.$wx.options || {}
+      let url = redirectUrl ? `/${decodeURIComponent(redirectUrl)}` : ''
+      if (webViewRedirectUrl) {
+        const baseURL = '/pages/webview'
+        const params = {
+          webviewUrl: webViewRedirectUrl,
+          webviewLogin
+        }
+        const paramsArr = Object.keys(params).map(key => `${key}=${params[key]}`)
+        url = `${baseURL}?${paramsArr.join('&')}`
+      }
+      // console.log('url', url)
+      if (url && parseInt(backToWebView)) {
+        try {
+          await wepy.wx.redirectTo({ url })
+          // console.log('redirectTo', url)
+        } catch (error) {
+          await wepy.wx.switchTab({ url })
+          // console.log('switchTab', url)
+        }
+      } else {
+        // console.log('navigateBack')
+        await wepy.wx.navigateBack({
+          delta: 1
+        })
+      }
+    }
+  },
+  created () {
+    try {
+      this.clientRect = wx.getMenuButtonBoundingClientRect()
+    } catch (error) {
+      // console.log('getMenuButtonBoundingClientRect', error)
+    }
+    // // eslint-disable-next-line no-undef
+    // const pages = getCurrentPages()
+    // this.visible = pages.length > 1
+    // console.log('NavCustom', this.clientRect)
+  }
+})
+</script>
+<style lang="less">
+.nav-custom {
+  position: fixed;
+  // right: 10px + 87px;
+  left: 10px;
+  z-index: 9999;
+  box-sizing: border-box;
+  // border: 1px solid rgba(255, 255, 255, 0.2);
+  // border: 1rpx solid #dedede;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.6);
+  // background-color: rgba(0, 0, 0, 0.2);
+}
+.nav-custom__btn {
+  height: 32px;
+  min-width: 32px;
+  background-color: transparent;
+}
+.icon-back {
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+  border-width: 2px 0 0 2px;
+  border-color: #000;
+  border-style: solid;
+  position: absolute;
+  top: 50%;
+  left: calc(~'50% + 2px');
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+</style>

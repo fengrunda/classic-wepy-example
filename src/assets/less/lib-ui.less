@@ -1,6 +1,34 @@
 // 按需添加 命名规范请参考 https://docs.emmet.io/cheat-sheet/
 
 /*---------------------------------------------------布局 start -----------------------------------------------------*/
+.pos-r {
+  position: relative;
+}
+
+.pos-a {
+  position: absolute;
+}
+
+.pos-f {
+  position: fixed;
+}
+
+.pos-s {
+  position: static;
+}
+
+.pos-sk {
+  position: sticky;
+}
+
+.pos-us {
+  position: unset;
+}
+
+.zi-10 {
+  z-index: 10;
+}
+
 .d-n {
   display: none;
 }
@@ -13,31 +41,107 @@
   display: inline-block;
 }
 
-.mtLoop(@counter) when (@counter > 0) {
-  .mt-@{counter} {
-    margin-top: unit(@counter, px) !important;
-  }
-  .mtLoop(( @counter - 5));
+.t-0 {
+  top: 0;
 }
-.mtLoop(40);
+
+.r-0 {
+  right: 0;
+}
+
+.b-0 {
+  bottom: 0;
+}
+
+.l-0 {
+  left: 0;
+}
+
+.of-h {
+  overflow: hidden;
+}
+
+.mtLoop(@counter) when (@counter > = 0) {
+  .mt-@{counter} {
+    margin-top: unit(@counter, rpx) !important;
+  }
+  .mtLoop(( @counter - 10));
+}
+.mtLoop(80);
+
+.mbLoop(@counter) when (@counter > = 0) {
+  .mb-@{counter} {
+    margin-bottom: unit(@counter, rpx) !important;
+  }
+  .mbLoop(( @counter - 10));
+}
+.mbLoop(80);
+
+.mlLoop(@counter) when (@counter > = 0) {
+  .ml-@{counter} {
+    margin-left: unit(@counter, rpx) !important;
+  }
+  .mlLoop(( @counter - 10));
+}
+.mlLoop(40);
+
+.mrLoop(@counter) when (@counter > = 0) {
+  .mr-@{counter} {
+    margin-right: unit(@counter, rpx) !important;
+  }
+  .mrLoop(( @counter - 10));
+}
+.mrLoop(40);
 
 .ml-a {
-  margin-left: auto;
+  margin-left: auto !important;
 }
 
 .mr-a {
-  margin-right: auto;
+  margin-right: auto !important;
 }
 
-.pbLoop(@counter) when (@counter > 0) {
+.pbLoop(@counter) when (@counter > = 0) {
   .pb-@{counter} {
-    padding-bottom: unit(@counter, px) !important;
+    padding-bottom: unit(@counter, rpx) !important;
   }
-  .pbLoop(( @counter - 5));
+  .pbLoop(( @counter - 10));
 }
-.pbLoop(40);
+.pbLoop(80);
+
+.ptLoop(@counter) when (@counter > = 0) {
+  .pt-@{counter} {
+    padding-top: unit(@counter, rpx) !important;
+  }
+  .ptLoop(( @counter - 10));
+}
+.ptLoop(80);
+
+.plLoop(@counter) when (@counter > = 0) {
+  .pl-@{counter} {
+    padding-left: unit(@counter, rpx) !important;
+  }
+  .plLoop(( @counter - 10));
+}
+.plLoop(80);
+
+.prLoop(@counter) when (@counter > = 0) {
+  .pr-@{counter} {
+    padding-right: unit(@counter, rpx) !important;
+  }
+  .prLoop(( @counter - 10));
+}
+.prLoop(80);
 /*---------------------------------------------------布局 end -----------------------------------------------------*/
 /*---------------------------------------------------文本 start -----------------------------------------------------*/
+.fw-b {
+  font-weight: bold;
+}
+
+.fw-n {
+  font-weight: normal;
+}
+
 .wow-b {
   word-wrap: break-word;
 }
@@ -59,6 +163,10 @@
 }
 /*---------------------------------------------------文本 end -----------------------------------------------------*/
 /*---------------------------------------------------flex 容器 start -----------------------------------------------------*/
+.d-if {
+  display: inline-flex;
+}
+
 .d-f {
   display: flex;
 }
@@ -106,10 +214,18 @@
 .fxd-c {
   flex-direction: column;
 }
+
+.fxd-r {
+  flex-direction: row;
+}
 /*---------------------------------------------------flex 容器 end -----------------------------------------------------*/
 /*---------------------------------------------------flex item start ---------------------------------------------------*/
 .fxb-a {
   flex-basis: auto;
+}
+
+.fxb-100 {
+  flex-basis: 100%;
 }
 
 .fxg-0 {

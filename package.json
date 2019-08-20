@@ -2,13 +2,12 @@
   "name": "classic-wepy-example",
   "version": "0.0.2",
   "description": "A WePY project",
-  "main": "dist/app.js",
+  "main": "weapp/app.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev APP_BUILD_TYPE=test wepy build --watch",
-    "build-test": "cross-env NODE_ENV=production APP_BUILD_TYPE=test wepy build --no-cache",
-    "build": "cross-env NODE_ENV=production APP_BUILD_TYPE=production wepy build --no-cache",
-    "dev:web": "wepy build --output web",
-    "clean": "find ./dist -maxdepth 1 -not -name 'project.config.json' -not -name 'dist' | xargs rm -rf",
+    "dev": "cross-env APP_BUILD_TYPE=test ./node_modules/.bin/wepy build --watch --log trace",
+    "build": "cross-env NODE_ENV=production APP_BUILD_TYPE=production ./node_modules/.bin/wepy build --no-cache",
+    "build-test": "cross-env NODE_ENV=production APP_BUILD_TYPE=test ./node_modules/.bin/wepy build --no-cache",
+    "clean": "rm -rf weapp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "wepy": {
@@ -18,22 +17,22 @@
   "author": "fengrunda <fengrunda@rfchina.com>",
   "license": "MIT",
   "dependencies": {
-    "redux": "^3.7.2",
-    "redux-actions": "^2.2.1",
-    "redux-promise": "^0.5.3",
-    "roddeh-i18n": "^1.2.0",
-    "wepy": "^1.7.2-alpha1",
-    "wepy-async-function": "^1.4.4",
-    "wepy-com-toast": "^1.0.2",
-    "wepy-redux": "^1.5.3"
+    "@wepy/core": "^2.0.0-alpha.8",
+    "@wepy/use-promisify": "^2.0.0",
+    "@wepy/x": "^2.0.2",
+    "dayjs": "^1.8.14",
+    "roddeh-i18n": "^1.2.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@wepy/babel-plugin-import-regenerator": "0.0.2",
+    "@wepy/cli": "^2.0.0-alpha.12",
+    "@wepy/compiler-babel": "^2.0.1",
+    "@wepy/compiler-less": "^2.0.1",
+    "@wepy/plugin-define": "^2.0.1",
+    "@wepy/plugin-uglifyjs": "0.0.2",
     "babel-eslint": "^7.2.1",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-export-extensions": "^6.22.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
     "cross-env": "^5.1.3",
     "eslint": "^3.18.0",
     "eslint-config-standard": "^7.1.0",
@@ -43,10 +42,6 @@
     "eslint-plugin-standard": "^2.0.1",
     "less": "^3.8.1",
     "less-plugin-autoprefix": "^2.0.0",
-    "remote-redux-devtools": "^0.5.0",
-    "wepy-compiler-babel": "^1.5.1",
-    "wepy-compiler-less": "^1.3.10",
-    "wepy-eslint": "^1.5.3",
-    "wepy-plugin-replace": "^1.5.10"
+    "wepy-eslint": "^1.5.3"
   }
 }

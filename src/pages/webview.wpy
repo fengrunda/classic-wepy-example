@@ -1,0 +1,70 @@
+<template>
+  <!-- <text>{{webviewUrl}}</text> -->
+  <web-view class="fxg-1 fxsh-1" src="{{webviewUrl}}" bindload="handleLoad" binderror="handleError"></web-view>
+</template>
+
+<config>
+{
+  navigationBarTitleText: '物业缴费',
+  // usingComponents: {}
+}
+</config>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import initPage from '@/mixins/initPage.js'
+import { UrlClass } from '@/config/utils.js'
+// import { translate } from '../i18n'
+wepy.page({
+  store,
+  mixins: [initPage],
+  data: {
+    webviewUrl: ''
+  },
+  computed: {
+    // navTitle () {
+    //   let navTitle = '首页'
+    //   if (this.language) {
+    //     navTitle = translate(this.language)('home__btn-text_normal', { name: 'aaa' }) || ''
+    //   }
+    //   wx.setNavigationBarTitle({ title: navTitle })
+    //   return navTitle
+    // }
+  },
+  methods: {
+    handleLoad (e) {
+      wx.hideLoading()
+      console.log('handleLoad', e)
+    },
+    handleError (e) {
+      wx.hideLoading()
+      console.log('handleError', e)
+    }
+  },
+  onLoad () {
+    if (this.$wx.options.webviewUrl) {
+      wx.showLoading({ title: '正在加载...', mask: true })
+      // console.log(new UrlClass('http://www.baidu.com/path1/path2?search1=1&search2=2#/hash1/hash2?query1=a&query2=b'))
+      let webviewUrl = decodeURIComponent(this.$wx.options.webviewUrl)
+      // 判断是否带上accessToken
+      if (this.$wx.options.webviewLogin && parseInt(this.$wx.options.webviewLogin) === 1) {
+        // eslint-disable-next-line no-undef, new-cap
+        const urlObj = new UrlClass(webviewUrl)
+        // console.log(urlObj)
+        // 判断将accessToken拼在hash或search
+        if (urlObj.hash) {
+          urlObj.hash += (urlObj.hash.match(/\?/) ? '&' : '?') + `access_token=${this.accessToken}`
+        } else {
+          urlObj.search += (urlObj.search.match(/\?/) ? '&' : '?') + `access_token=${this.accessToken}`
+        }
+        webviewUrl = urlObj.href
+      }
+      webviewUrl = webviewUrl.replace('http:', 'https:')
+      console.log('webviewUrl', webviewUrl)
+      this.webviewUrl = webviewUrl
+    }
+  }
+})
+</script>
+<style lang="less">
+</style>
