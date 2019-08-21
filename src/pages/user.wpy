@@ -1,12 +1,33 @@
 <template>
   <view class="main-wrapper user pb-116">
     <view class="user__bg-rect pos-f l-0 t-0 r-0" style="{{'padding-top:'+ (statusBarHeight + 44) +'px;'}}"></view>
-    <view class="user__header-title pos-f l-0 r-0 ta-c" style="{{'top:'+ statusBarHeight +'px;'}}">User</view>
+    <view class="user__header-title pos-f l-0 r-0 ta-c" style="{{'top:'+ statusBarHeight +'px;'}}">{{i18n.translate(language,'user__header-title')}}</view>
+    <view class="user__banner pos-f l-0 r-0 d-b pl-30 pr-30 pt-30 pb-30 mt-10" style="{{'top:'+ (statusBarHeight + 44) +'px;'}}">
+      <view class="user__banner__info d-f ai-c">
+        <image class="user__banner__info__avatar fxg-0 fxsh-0" src="{{userInfo.pic || ''}}" wx:if="{{userInfo.pic}}"></image>
+        <view class="user__banner__info__avatar fxg-0 fxsh-0" wx:else></view>
+        <view class="fxg-1 fxsh-1 ml-20">
+          <button bindtap="navToLogin" class="user__banner__info__name_button d-b fw-b ta-l color_text-333 pl-0 pr-0" wx:if="{{!isLogin}}">{{i18n.translate(language,'user__banner__info__name_button')}}</button>
+          <text class="user__banner__info__name d-b fw-b color_text-333" wx:else>{{userInfo.nickname}}</text>
+          <text class="user__banner__info__phone d-b color_text-999 mt-10" wx:if="{{isLogin}}">{{userInfo.phone}}</text>
+        </view>
+      </view>
+      <view class="border_b mt-30"></view>
+      <picker class="d-b mt-30" bindchange="handleChangeLanguage" value="{{languageIndex}}" range-key="text" range="{{languageList}}">
+        <view class="user__banner__language d-f ai-c">
+          <image class="user__banner__language__icon fxg-0 fxsh-0" src="@/assets/images/icon_language_change.png"></image>
+          <!-- <text class="user__banner__language__text fxg-0 fxsh-0 ml-20 mr-30">{{i18n.translate(language,'user__banner__language__text_multi-language')}}</text> -->
+          <text class="user__banner__language__text fxg-0 fxsh-0 ml-20 mr-30">{{i18n.translate(language,'user__banner__language__text_multi-language')}}</text>
+          <text class="user__banner__language__text fxg-1 fxsh-1 ta-r mr-10">{{languageList[languageIndex].text}}</text>
+          <view class="icon-arrow_right fxg-0 fxsh-0"></view>
+        </view>
+      </picker>
+    </view>
     <view class="user__bg-rect_white pos-r l-0 t-0 r-0" style="{{'padding-top:'+ (statusBarHeight + 44) +'px;'}}"></view>
-    <image class="img-empty d-b" style="padding-top:130rpx;" src="@/assets/images/pic_empty_card.png" ></image>
     <tabBar></tabBar>
   </view>
 </template>
+<wxs module="i18n" src="../i18n/index.wxs"></wxs>
 <config>
 {
   navigationBarTitleText: '我的',
@@ -24,22 +45,68 @@ import store from '@/store'
 import { mapState, mapActions } from '@wepy/x'
 import initPage from '@/mixins/initPage.js'
 import apiActions from '@/config/api.js'
+import { translate } from '../i18n'
 import { errorFormatter } from '@/config/utils.js'
 wepy.page({
   store,
   mixins: [initPage],
   data: {
-
+    isLogin: false,
+    userInfo: {},
+    languageList: [
+      {
+        text: 'English',
+        value: 'en'
+      },
+      {
+        text: '中文',
+        value: 'zh_CN'
+      }
+    ],
+    showRKE: false,
+    showFace: false
   },
   computed: {
     ...mapState({
       statusBarHeight: state => state.system.statusBarHeight || 20
-    })
+    }),
+    navTitle () {
+      let navTitle = translate(this.language)('user__title') || ''
+      // try {
+      //   wx.setTabBarItem({ index: 0, text: translate(this.language)('app__tabbar__item-0') })
+      //   wx.setTabBarItem({ index: 1, text: translate(this.language)('app__tabbar__item-1') })
+      // } catch (error) {
+      //   // console.error(error)
+      // }
+      wx.setNavigationBarTitle({ title: navTitle })
+      return navTitle
+    },
+    languageIndex: {
+      get () {
+        let index = this.languageList.findIndex(lang => {
+          let language = this.language.toLowerCase().match('zh') ? 'zh_CN' : this.language
+          // console.log(this.language, language, lang.value)
+          return language === lang.value
+        }) || 0
+        console.log('languageIndex get', index)
+        return index === -1 ? 0 : index
+      },
+      set (value) {
+        // console.log('languageIndex set', value)
+        this.initialLanguage(this.languageList[value].value)
+        wx.setStorageSync('language', this.languageList[value].value)
+      }
+    },
+    isZh () {
+      return !!this.language.toLowerCase().match('zh')
+      // return true
+    }
   },
   methods: {
     ...mapActions({
       updateOpenId: 'updateOpenId',
-      updateUnionId: 'updateUnionId'
+      updateUnionId: 'updateUnionId',
+      initialLanguage: 'initialLanguage'
     }),
     /**
      * 获取用户信息
@@ -54,6 +121,9 @@ wepy.page({
           reject(error)
         }
       })
+    },
+    handleChangeLanguage (e) {
+      this.languageIndex = e.$wx.detail.value
     }
   },
   async onShow () {
@@ -97,9 +167,62 @@ wepy.page({
   color: #fff;
   z-index: 6;
 }
-.img-empty {
-  .imgSize('../images/pic_empty_card.png'); // mixins方法，相对路按照lib-mixins.less文件的位置计算
-  width: @imgW; // 获取mixins方法的变量
-  height: @imgH; // 获取mixins方法的变量
+.user__banner {
+  top: 64px;
+  left: 50%;
+  margin-left: -335rpx;
+  width: 670rpx;
+  // height: 253rpx;
+  border: 1rpx solid #e1e3ea;
+  border-radius: 40rpx;
+  box-shadow: 0 10rpx 20rpx rgba(87, 119, 192, 0.1);
+  background-color: #fff;
+  box-sizing: border-box;
+  z-index: 6;
+}
+.user__banner__info {
+  // height: 124rpx;
+  // background-color: rgba(158, 56, 56, 0.349);
+}
+.user__banner__info__avatar {
+  width: 96rpx;
+  height: 96rpx;
+  background-image: @img_icon_my_head_empty;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border-radius: 50%;
+}
+.user__banner__info__name {
+  font-size: 36rpx;
+  line-height: 44rpx;
+}
+.user__banner__info__name_button {
+  font-size: 36rpx;
+  line-height: 44rpx;
+  background-color: transparent;
+  border-radius: 0;
+}
+.user__banner__info__phone {
+  font-size: 28rpx;
+  line-height: 36rpx;
+}
+.user__banner__language {
+}
+.user__banner__language__icon {
+  width: 60rpx;
+  height: 48rpx;
+}
+.user__banner__language__text {
+  font-size: 28rpx;
+  line-height: 36rpx;
+  .line-clamp(1, 36rpx);
+}
+.user__serive-group {
+  background-color: #fff;
+} 
+.user__serive-group__btn {
+  background-color: transparent;
+  border-radius: 0;
+  color: #333;
 }
 </style>

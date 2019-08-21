@@ -67,6 +67,12 @@ wepy.app({
       if (accessToken) {
         store.dispatch('updateAccessToken', accessToken)
       }
+      const language = wx.getStorageSync('language') || store.state.system.language
+      // 初始化语言库
+      store.dispatch('initialLanguage', language)
+      // setTimeout(() => {
+      //   store.dispatch('initialLanguage', 'en')
+      // }, 3000)
     } catch (e) {
       console.error('app onShow', e)
     }

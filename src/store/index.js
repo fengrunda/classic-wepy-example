@@ -13,6 +13,9 @@ const store = new Vuex.Store({
       openId: wx.getStorageSync('openId') || '',
       unionId: wx.getStorageSync('unionId') || ''
     },
+    i18n: {
+      language: wx.getStorageSync('language') || 'zh'
+    },
     page: {
       route: '', // 页面路径
       options: {} // 页面参数
@@ -38,6 +41,13 @@ const store = new Vuex.Store({
     },
     updateUnionId ({ commit, dispatch, state }, unionId) {
       commit('UPDATE_USER_UNION_ID', unionId)
+    },
+
+    // i18n
+    initialLanguage ({ commit, dispatch, state }, language) {
+      console.log('initialLanguage', language)
+      commit('UPDATE_I18N_LANGUAGE', language)
+      // eventHub.$emit('onLanguageChange', language)
     },
 
     // page
@@ -78,6 +88,12 @@ const store = new Vuex.Store({
       // console.log('UPDATE_USER_UNION_ID', unionId)
       state.user.unionId = unionId
       wx.setStorageSync('unionId', unionId)
+    },
+
+    // i18n
+    UPDATE_I18N_LANGUAGE (state, language = 'zh') {
+      state.i18n.language = language
+      // wx.setStorageSync('language', language)
     },
 
     // page

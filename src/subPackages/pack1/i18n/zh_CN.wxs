@@ -1,0 +1,26 @@
+// 使用BEM命名规范，参考：https://www.w3cschool.cn/weflow/weflow-bem.html
+module.exports = {
+  // 首页开始
+  'home__header-title': '自在社区享家',
+  'home__module__title_community-service': '社区服务',
+  'home__module__feature__name_base-repair': '意见报修',
+  'home__module__feature__name_base-payment': '物业缴费',
+  'home__module__feature__name_base-payment_comming-soon': '敬请期待',
+  'home__module__title_intelligent-service': '智行服务',
+  'home__module__feature__name_intelligent-visit': '申请拜访',
+  'home__module__feature__name_intelligent-carpark': '停车场服务',
+  'home__module__feature__name_intelligent-charge': '爱车充电',
+  'home__module__feature__name_intelligent-RKE': '蓝牙开门',
+  'home__module__feature__name_intelligent-face': '人脸上传',
+  'home__module_store__title': '生活服务',
+  'home__module_store__desc': '多姿多彩社区购物体验',
+  'mask__hint__text': '可在“我的”里面切换中/英文版本哦',
+  // 首页结束
+  // 我的开始
+  'user__header-title': '我的',
+  'user__banner__info__name_button': '点击登录',
+  'user__banner__language__text_multi-language': '多语言',
+  'user__form-group__item__text_repair-order-list': '意见报修订单',
+  'user__form-group__item__text_logout': '退出登录'
+  // 我的结束
+}

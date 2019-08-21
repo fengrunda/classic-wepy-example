@@ -20,7 +20,8 @@
     "@wepy/core": "^2.0.0-alpha.8",
     "@wepy/use-promisify": "^2.0.0",
     "@wepy/x": "^2.0.2",
-    "dayjs": "^1.8.14"
+    "dayjs": "^1.8.14",
+    "roddeh-i18n": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.0",

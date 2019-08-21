@@ -5,6 +5,7 @@ import { autoLogin, checkAndUpdateSession } from '@/config/thirdLogin.js'
 export default {
   computed: {
     ...mapState({
+      language: state => state.i18n.language,
       accessToken: state => state.user.accessToken,
       thirdSession: state => state.user.thirdSession,
       enableAutoLogin: state => state.user.enableAutoLogin

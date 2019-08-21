@@ -1,0 +1,16 @@
+var langPackages = {
+  'zh_CN': require('./zh_CN.wxs'),
+  'en': require('./en.wxs')
+}
+var translate = function (lang = 'en', key = '', formatArr = []) {
+  var langPackage = langPackages[lang.toLowerCase().match('zh') ? 'zh_CN' : lang] || langPackages['en']
+  var result = langPackage[key] || ''
+  for (var i = 0; i < formatArr.length; i++) {
+    result = result.replace('%{' + i + '}', formatArr[i])
+  }
+  return result
+}
+
+module.exports = {
+  translate: translate
+}
