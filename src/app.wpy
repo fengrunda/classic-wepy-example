@@ -3,9 +3,18 @@
   pages: [
     'pages/home',
     'pages/user',
-    'pages/webveiw',
+    'pages/webview',
   ],
-  subPackages: [], // 分包目录
+  // 分包目录
+  subPackages: [
+    {
+      root: 'subPackages/pack1/',
+      name: 'pack1',
+      pages: [
+        'page1',
+      ]
+    },
+  ],
   tabBar: {
     "custom": true,
     "color": "#333",
@@ -46,7 +55,21 @@ wepy.app({
   },
   async onShow (options) {
     // 获取其他小程序或app跳转过来带的accessToken
-    const { referrerInfo: { extraData = {} } = {} } = options || {}
+    const { referrerInfo: { extraData: { accessToken: accessTokenSapp = '' } = {}, accessToken: accessTokenApp = '' } = {} } = options || {}
+    const accessToken = accessTokenSapp || accessTokenApp || ''
+    try {
+      // 检查用户信息授权
+      const { authSetting = {} } = await wepy.wx.getSetting() || {}
+      if (!authSetting['scope.userInfo'] || accessToken) {
+        // 由于默认的自动登录标识为1，所以如果用户没有授权则不自动登录
+        store.dispatch('updateAutoWechatLogin', 0)
+      }
+      if (accessToken) {
+        store.dispatch('updateAccessToken', accessToken)
+      }
+    } catch (e) {
+      console.error('app onShow', e)
+    }
   },
   methods: {}
 })

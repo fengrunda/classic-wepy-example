@@ -67,7 +67,6 @@ import store from '@/store'
 import initPage from '@/mixins/initPage.js'
 // import apiActions from '@/config/api.js'
 import { mapState, mapActions } from '@wepy/x'
-import { translate } from '../i18n'
 import { errorFormatter } from '@/config/utils.js'
 wepy.page({
   store,
@@ -81,12 +80,7 @@ wepy.page({
     ...mapState({
       openId: state => state.user.openId,
       unionId: state => state.user.unionId
-    }),
-    navTitle () {
-      let navTitle = translate(this.language)('home__btn-text_normal', { name: 'aaa' }) || ''
-      wx.setNavigationBarTitle({ title: navTitle })
-      return navTitle
-    }
+    })
   },
   methods: {
     ...mapActions({

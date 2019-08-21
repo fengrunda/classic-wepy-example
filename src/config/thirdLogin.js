@@ -58,6 +58,7 @@ const getAccessToken = (thirdSession) => {
         reject(new Error('用户未授权'))
         return
       }
+      // 获取用户token
       const { data: { access_token: accessToken, user_flag: userFlag } = {} } = await apiActions.login.openlogin({
         params: {
           accessType: 1,
@@ -84,27 +85,27 @@ const autoLogin = (currentSession, currentToken, enableAutoLogin, $wx) => {
   return new Promise(async (resolve, reject) => {
     let accessToken = currentToken
     let thirdSession = currentSession
-    if (!firstVisit) {
+    if (!firstVisit) { // 非首次则直接返回
       resolve({ thirdSession, accessToken })
       return
     }
     try {
+      // 检查或更新thirdSession有效性
       thirdSession = await checkAndUpdateSession(thirdSession) || ''
     } catch (error) {}
-    // console.log('enableAutoLogin', enableAutoLogin)
     if (!enableAutoLogin) {
       resolve({ thirdSession, accessToken })
-      // console.log('enableAutoLogin 0', { thirdSession, accessToken })
       return
     }
     firstVisit = false
     try {
+      // 获取用户token
       const { accessToken: accessTokenNew = '' } = await getAccessToken(thirdSession) || {}
       accessToken = accessTokenNew
-      // console.log('autoLogin success 1', thirdSession, accessToken)
     } catch (error) {
-      if (error.status === 406) {
-        redirectToLogin($wx.route, $wx.options, true)
+      if (error.status === 406) { // TODO 用户手机号与微信号未绑定
+        // TODO 跳转到绑定页
+        // redirectToLogin($wx.route, $wx.options, true)
       }
     }
     resolve({ thirdSession, accessToken })

@@ -22,14 +22,6 @@ wepy.page({
     webviewUrl: ''
   },
   computed: {
-    // navTitle () {
-    //   let navTitle = '首页'
-    //   if (this.language) {
-    //     navTitle = translate(this.language)('home__btn-text_normal', { name: 'aaa' }) || ''
-    //   }
-    //   wx.setNavigationBarTitle({ title: navTitle })
-    //   return navTitle
-    // }
   },
   methods: {
     handleLoad (e) {

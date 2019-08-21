@@ -17,7 +17,6 @@
 <script>
 import wepy from '@wepy/core'
 import store from '@/store'
-import { translate } from '@/i18n'
 import { mapState } from '@wepy/x'
 wepy.component({
   store,
@@ -45,22 +44,11 @@ wepy.component({
   },
   computed: {
     ...mapState({
-      route: state => '/' + state.page.route,
-      language: state => state.i18n.language
+      route: state => '/' + state.page.route
     }),
     selected: {
       get () {
         let index = this.list.findIndex(item => item.pagePath === this.route) || 0
-        // console.log('get selected', index, this.route)
-        // this.$wx.setData({
-        //   selected: index
-        // })
-        try {
-          this.list[0].text = translate(this.language)('app__tabbar__item-0')
-          this.list[1].text = translate(this.language)('app__tabbar__item-1')
-        } catch (error) {
-          // console.error(error)
-        }
         return index
       },
       set (value) {

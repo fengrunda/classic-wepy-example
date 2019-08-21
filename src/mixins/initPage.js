@@ -5,7 +5,9 @@ import { autoLogin, checkAndUpdateSession } from '@/config/thirdLogin.js'
 export default {
   computed: {
     ...mapState({
-      openId: state => state.user.openId
+      accessToken: state => state.user.accessToken,
+      thirdSession: state => state.user.thirdSession,
+      enableAutoLogin: state => state.user.enableAutoLogin
     })
   },
   methods: {
@@ -31,7 +33,9 @@ export default {
         try {
           const { accessToken, thirdSession } = await autoLogin(this.thirdSession, this.accessToken, this.enableAutoLogin, this.$wx)
           if (!accessToken && requireAccessToken) {
-            redirectToLogin(this.$wx.route, this.$wx.options)
+            // TODO 跳转登录页
+            // redirectToLogin(this.$wx.route, this.$wx.options)
+            reject(new Error('requireAccessToken'))
             return
           } else {
             this.updateThirdSession(thirdSession)

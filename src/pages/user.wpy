@@ -1,102 +1,12 @@
 <template>
   <view class="main-wrapper user pb-116">
     <view class="user__bg-rect pos-f l-0 t-0 r-0" style="{{'padding-top:'+ (statusBarHeight + 44) +'px;'}}"></view>
-    <view class="user__header-title pos-f l-0 r-0 ta-c" style="{{'top:'+ statusBarHeight +'px;'}}">{{i18n.translate(language,'user__header-title')}}</view>
-    <view class="user__banner pos-f l-0 r-0 d-b pl-30 pr-30 pt-30 pb-30 mt-10" style="{{'top:'+ (statusBarHeight + 44) +'px;'}}">
-      <view class="user__banner__info d-f ai-c">
-        <image class="user__banner__info__avatar fxg-0 fxsh-0" src="{{userInfo.pic || ''}}" wx:if="{{userInfo.pic}}"></image>
-        <view class="user__banner__info__avatar fxg-0 fxsh-0" wx:else></view>
-        <view class="fxg-1 fxsh-1 ml-20">
-          <button bindtap="navToLogin" class="user__banner__info__name_button d-b fw-b ta-l color_text-333 pl-0 pr-0" wx:if="{{!isLogin}}">{{i18n.translate(language,'user__banner__info__name_button')}}</button>
-          <text class="user__banner__info__name d-b fw-b color_text-333" wx:else>{{userInfo.nickname}}</text>
-          <text class="user__banner__info__phone d-b color_text-999 mt-10" wx:if="{{isLogin}}">{{userInfo.phone}}</text>
-        </view>
-      </view>
-      <view class="border_b mt-30"></view>
-      <picker class="d-b mt-30" bindchange="handleChangeLanguage" value="{{languageIndex}}" range-key="text" range="{{languageList}}">
-        <view class="user__banner__language d-f ai-c">
-          <image class="user__banner__language__icon fxg-0 fxsh-0" src="@/assets/images/icon_language_change.png"></image>
-          <!-- <text class="user__banner__language__text fxg-0 fxsh-0 ml-20 mr-30">{{i18n.translate(language,'user__banner__language__text_multi-language')}}</text> -->
-          <text class="user__banner__language__text fxg-0 fxsh-0 ml-20 mr-30">{{i18n.translate(language,'user__banner__language__text_multi-language')}}</text>
-          <text class="user__banner__language__text fxg-1 fxsh-1 ta-r mr-10">{{languageList[languageIndex].text}}</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0"></view>
-        </view>
-      </picker>
-    </view>
+    <view class="user__header-title pos-f l-0 r-0 ta-c" style="{{'top:'+ statusBarHeight +'px;'}}">User</view>
     <view class="user__bg-rect_white pos-r l-0 t-0 r-0" style="{{'padding-top:'+ (statusBarHeight + 44) +'px;'}}"></view>
-    <view class="user__serive-group pos-r" style="padding-top:130rpx;">
-      <navigator class="form-group__item user__serive-group__btn d-b ta-l pl-40 pr-40" url="/subPackages/payment/orderList" wx:if="{{isZh}}">
-        <view class="d-f border_b ai-c">
-          <text class="form-group__item__text d-ib fxg-1 fxsh-1 mr-20">物业缴费订单</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0 d-ib"></view>
-        </view>
-      </navigator>
-      <navigator class="form-group__item user__serive-group__btn d-b ta-l pl-40 pr-40" url="/subPackages/repair/orderList">
-        <view class="d-f ai-c {{(isZh&& false)?'border_b':''}}">
-          <text class="form-group__item__text d-ib fxg-1 fxsh-1 mr-20">{{i18n.translate(language,'user__form-group__item__text_repair-order-list')}}</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0 d-ib"></view>
-        </view>
-      </navigator>
-      <button class="form-group__item user__serive-group__btn d-b ta-l pl-40 pr-40" wx:if="{{isZh && false}}">
-        <view class="d-f ai-c">
-          <text class="form-group__item__text d-ib fxg-1 fxsh-1 mr-20">物业缴费发票</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0 d-ib"></view>
-        </view>
-      </button>
-    </view>
-    <view class="user__serive-group pos-r mt-20" wx:if="{{isZh}}">
-      <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="orderList" class="form-group__item user__serive-group__btn d-b ta-l pl-40 pr-40">
-        <view class="d-f border_b ai-c">
-          <text class="form-group__item__text d-ib fxg-1 fxsh-1 mr-20">停车订单</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0 d-ib"></view>
-        </view>
-      </button>
-      <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="coupon" class="form-group__item user__serive-group__btn d-b ta-l pl-40 pr-40">
-        <view class="d-f border_b ai-c">
-          <text class="form-group__item__text d-ib fxg-1 fxsh-1 mr-20">停车优惠券</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0 d-ib"></view>
-        </view>
-      </button>
-      <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="myVisit" class="form-group__item user__serive-group__btn d-b ta-l pl-40 pr-40">
-        <view class="d-f border_b ai-c">
-          <text class="form-group__item__text d-ib fxg-1 fxsh-1 mr-20">我的拜访</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0 d-ib"></view>
-        </view>
-      </button>
-      <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="face" class="form-group__item user__serive-group__btn d-b ta-l pl-40 pr-40" wx:if="{{showFace}}">
-        <view class="d-f border_b ai-c">
-          <text class="form-group__item__text d-ib fxg-1 fxsh-1 mr-20">上传人脸</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0 d-ib"></view>
-        </view>
-      </button>
-      <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="invoice" class="form-group__item user__serive-group__btn d-b ta-l pl-40 pr-40">
-        <view class="d-f border_b ai-c">
-          <text class="form-group__item__text d-ib fxg-1 fxsh-1 mr-20">我的发票</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0 d-ib"></view>
-        </view>
-      </button>
-      <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="chrageList" class="form-group__item user__serive-group__btn d-b ta-l pl-40 pr-40">
-        <view class="d-f border_b ai-c">
-          <text class="form-group__item__text d-ib fxg-1 fxsh-1 mr-20">充电桩流水</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0 d-ib"></view>
-        </view>
-      </button>
-      <button bindtap="navToMiniProgram" data-sapp-type="carpark" data-path-type="recordDevice" class="form-group__item user__serive-group__btn d-b ta-l pl-40 pr-40">
-        <view class="d-f ai-c">
-          <text class="form-group__item__text d-ib fxg-1 fxsh-1 mr-20">门禁设备录入</text>
-          <view class="icon-arrow_right fxg-0 fxsh-0 d-ib"></view>
-        </view>
-      </button>
-    </view>
-    <view class="user__serive-group pos-r mt-20" wx-if="{{isLogin}}">
-      <button bindtap="logout" class="form-group__item user__serive-group__btn d-b ta-c pl-40 pr-40">
-        <text class="form-group__item__text d-b ai-c fxg-1 fxsh-1 color_text-red fw-b">{{i18n.translate(language,'user__form-group__item__text_logout')}}</text>
-      </button>
-    </view>
+    <image class="img-empty d-b" style="padding-top:130rpx;" src="@/assets/images/pic_empty_card.png" ></image>
     <tabBar></tabBar>
   </view>
 </template>
-<wxs module="i18n" src="../i18n/index.wxs"></wxs>
 <config>
 {
   navigationBarTitleText: '我的',
@@ -105,7 +15,6 @@
   backgroundColor: '#f5f5f9',
   usingComponents: {
     tabBar: '~@/components/tabBar'
-    // tabBar: '~@/custom-tab-bar/index'
   }
 }
 </config>
@@ -115,168 +24,49 @@ import store from '@/store'
 import { mapState, mapActions } from '@wepy/x'
 import initPage from '@/mixins/initPage.js'
 import apiActions from '@/config/api.js'
-import crossNav from '@/config/crossNav.js'
-import { translate } from '../i18n'
-import { errorFormatter, navigateWithParams } from '@/config/utils.js'
+import { errorFormatter } from '@/config/utils.js'
 wepy.page({
   store,
   mixins: [initPage],
   data: {
-    isLogin: false,
-    userInfo: {},
-    languageList: [
-      {
-        text: 'English',
-        value: 'en'
-      },
-      {
-        text: '中文',
-        value: 'zh_CN'
-      }
-    ],
-    showRKE: false,
-    showFace: false
+
   },
   computed: {
     ...mapState({
       statusBarHeight: state => state.system.statusBarHeight || 20
-    }),
-    navTitle () {
-      let navTitle = translate(this.language)('user__title') || ''
-      // try {
-      //   wx.setTabBarItem({ index: 0, text: translate(this.language)('app__tabbar__item-0') })
-      //   wx.setTabBarItem({ index: 1, text: translate(this.language)('app__tabbar__item-1') })
-      // } catch (error) {
-      //   // console.error(error)
-      // }
-      wx.setNavigationBarTitle({ title: navTitle })
-      return navTitle
-    },
-    languageIndex: {
-      get () {
-        let index = this.languageList.findIndex(lang => {
-          let language = this.language.toLowerCase().match('zh') ? 'zh_CN' : this.language
-          // console.log(this.language, language, lang.value)
-          return language === lang.value
-        }) || 0
-        console.log('languageIndex get', index)
-        return index === -1 ? 0 : index
-      },
-      set (value) {
-        // console.log('languageIndex set', value)
-        this.initialLanguage(this.languageList[value].value)
-        wx.setStorageSync('language', this.languageList[value].value)
-      }
-    },
-    isZh () {
-      return !!this.language.toLowerCase().match('zh')
-      // return true
-    }
+    })
   },
   methods: {
     ...mapActions({
-      initialLanguage: 'initialLanguage',
-      updateAutoWechatLogin: 'updateAutoWechatLogin',
       updateOpenId: 'updateOpenId',
       updateUnionId: 'updateUnionId'
     }),
-    handleChangeLanguage (e) {
-      this.languageIndex = e.$wx.detail.value
-    },
-    async navToMiniProgram (e) {
-      const { sappType = '', pathType = '' } = e.currentTarget.dataset || {}
-      try {
-        await wepy.wx.navigateToMiniProgram({
-          appId: crossNav[sappType].appId,
-          path: crossNav[sappType].paths[pathType],
-          extraData: {
-            accessToken: this.accessToken
-          },
-          envVersion: 'trial' // develop trial release
-        })
-        // console.log(res)
-      } catch (error) {
-        // console.log(error)
-      }
-    },
-    navToLogin (e) {
-      const paramsArr = Object.keys(this.$wx.options).map(key => `${key}=${this.$wx.options[key]}`)
-      const redirectUrl = `${this.$wx.route}?${paramsArr.join('&')}`
-      navigateWithParams({ url: '/subPackages/login/login', params: { redirectUrl: encodeURIComponent(redirectUrl) } })
-    },
-    logout () {
+    /**
+     * 获取用户信息
+     */
+    initUserInfo (accessToken) {
       return new Promise(async (resolve, reject) => {
-        wx.showLoading({ title: translate(this.language)('loading'), mask: true })
         try {
-          await apiActions.login.logout({ params: { thirdSession: this.thirdSession, access_token: this.accessToken } })
-          // wx.removeStorageSync('thirdSession')
-          // wx.removeStorageSync('accessToken')
-          resolve()
-        } catch (error) {
-          // console.log(error)
-          // wx.showToast({ duration: 3000, title: errorFormatter(error, 'logout'), icon: 'none' })
-          // reject(error)
-          resolve()
-        }
-        wx.hideLoading()
-        this.updateAccessToken('')
-        this.updateThirdSession('')
-        this.updateOpenId('')
-        this.updateUnionId('')
-        // wx.showToast({ duration: 3000, title: '注销成功', icon: 'none' })
-        // 注销后关闭微信自动登录
-        this.updateAutoWechatLogin(0)
-        this.isLogin = false
-        this.userInfo = {}
-      })
-    },
-    initUserInfo () {
-      // getMyUserInfo
-      return new Promise(async (resolve, reject) => {
-        // wx.showLoading({ title: translate(this.language)('loading'), mask: true })
-        try {
-          const { data: { member, user } = {} } = await apiActions.user.getMyUserInfo({ params: { access_token: this.accessToken } }) || {}
+          const { data: { member, user } = {} } = await apiActions.user.getMyUserInfo({ params: { access_token: accessToken } }) || {}
           resolve({ member, user })
-          // wx.hideLoading()
         } catch (error) {
-          // wx.hideLoading()
           console.error('user getMyUserInfo', error)
-          // if ([402, 403].some(status => error.status === status)) {
-          //   redirectToLogin(this.$wx.route, this.$wx.options)
-          //   return
-          // }
-          this.logout()
-          // wx.showToast({ duration: 3000, title: errorFormatter(error, 'initUserInfo'), icon: 'none' })
           reject(error)
         }
       })
     }
   },
   async onShow () {
-    wx.showLoading({ title: translate(this.language)('loading'), mask: true })
+    wx.showLoading({ title: '正在加载...', mask: true })
     try {
-      const { accessToken } = await this.autoLogin(false)
-      if (accessToken) {
-        const { user } = await this.initUserInfo() || {}
-        this.userInfo = user
-        this.isLogin = true
-        // console.log(member, user, this.isLogin)
-      }
+      const { accessToken } = await this.autoLogin() // 尝试自动登录，强制要有登录态
+      const { data = {} } = await this.initUserInfo(accessToken)
+      console.log(data)
       wx.hideLoading()
     } catch (error) {
       console.error('user onShow', error)
       wx.hideLoading()
-      if ([402, 403].some(status => error.status === status)) {
-        // redirectToLogin(this.$wx.route, this.$wx.options)
-        return
-      }
-      wx.showToast({ duration: 3000, title: errorFormatter(error, 'home onload'), icon: 'none' })
-    }
-    if (this.accessToken) {
-      try {
-        const { data: showFace = false } = await apiActions.carpark.checkFacePermission({ params: { access_token: this.accessToken } }) || {}
-        this.showFace = showFace
-      } catch (error) { }
+      wx.showToast({ duration: 3000, title: errorFormatter(error, 'user onShow'), icon: 'none' })
     }
   }
 })
@@ -307,62 +97,9 @@ wepy.page({
   color: #fff;
   z-index: 6;
 }
-.user__banner {
-  top: 64px;
-  left: 50%;
-  margin-left: -335rpx;
-  width: 670rpx;
-  // height: 253rpx;
-  border: 1rpx solid #e1e3ea;
-  border-radius: 40rpx;
-  box-shadow: 0 10rpx 20rpx rgba(87, 119, 192, 0.1);
-  background-color: #fff;
-  box-sizing: border-box;
-  z-index: 6;
-}
-.user__banner__info {
-  // height: 124rpx;
-  // background-color: rgba(158, 56, 56, 0.349);
-}
-.user__banner__info__avatar {
-  width: 96rpx;
-  height: 96rpx;
-  background-image: @img_icon_my_head_empty;
-  background-repeat: no-repeat;
-  background-size: contain;
-  border-radius: 50%;
-}
-.user__banner__info__name {
-  font-size: 36rpx;
-  line-height: 44rpx;
-}
-.user__banner__info__name_button {
-  font-size: 36rpx;
-  line-height: 44rpx;
-  background-color: transparent;
-  border-radius: 0;
-}
-.user__banner__info__phone {
-  font-size: 28rpx;
-  line-height: 36rpx;
-}
-.user__banner__language {
-}
-.user__banner__language__icon {
-  width: 60rpx;
-  height: 48rpx;
-}
-.user__banner__language__text {
-  font-size: 28rpx;
-  line-height: 36rpx;
-  .line-clamp(1, 36rpx);
-}
-.user__serive-group {
-  background-color: #fff;
-}
-.user__serive-group__btn {
-  background-color: transparent;
-  border-radius: 0;
-  color: #333;
+.img-empty {
+  .imgSize('../images/pic_empty_card.png'); // mixins方法，相对路按照lib-mixins.less文件的位置计算
+  width: @imgW; // 获取mixins方法的变量
+  height: @imgH; // 获取mixins方法的变量
 }
 </style>

@@ -9,6 +9,7 @@ const store = new Vuex.Store({
     user: {
       accessToken: wx.getStorageSync('accessToken') || '',
       thirdSession: wx.getStorageSync('thirdSession') || '',
+      enableAutoLogin: parseInt(wx.getStorageSync('enableAutoLogin')) >= 0 ? parseInt(wx.getStorageSync('enableAutoLogin')) : 1, // 自动登录开关
       openId: wx.getStorageSync('openId') || '',
       unionId: wx.getStorageSync('unionId') || ''
     },
@@ -29,6 +30,9 @@ const store = new Vuex.Store({
     updateThirdSession ({ commit, dispatch, state }, thirdSession) {
       commit('UPDATE_USER_THIRD_SESSION', thirdSession)
     },
+    updateAutoWechatLogin ({ commit, dispatch, state }, enableAutoLogin) {
+      commit('UPDATE_USER_ENABLE_AUTO_LOGIN', enableAutoLogin)
+    },
     updateOpenId ({ commit, dispatch, state }, openId) {
       commit('UPDATE_USER_OPEN_ID', openId)
     },
@@ -36,20 +40,11 @@ const store = new Vuex.Store({
       commit('UPDATE_USER_UNION_ID', unionId)
     },
 
-    // i18n
-    initialLanguage ({ commit, dispatch, state }, language) {
-      console.log('initialLanguage', language)
-      commit('UPDATE_I18N_LANGUAGE', language)
-      eventHub.$emit('onLanguageChange', language)
-      // commit('UPDATE_TRANSLOATOR', language.toLowerCase() === 'en' ? i18n.create(packageEn) : i18n.create(packageZh))
-    },
-
     // page
     setCurrentPageInfo ({ commit, dispatch, state }, { route, options }) {
       // console.log('setCurrentPageInfo', { route, options })
       commit('UPDATE_PAGE_ROUTE', route)
       commit('UPDATE_PAGE_OPTIONS', options)
-      // commit('UPDATE_TRANSLOATOR', language.toLowerCase() === 'en' ? i18n.create(packageEn) : i18n.create(packageZh))
     }
   },
   mutations: {
@@ -69,6 +64,10 @@ const store = new Vuex.Store({
     UPDATE_USER_THIRD_SESSION (state, thirdSession = '') {
       state.user.thirdSession = thirdSession
       wx.setStorageSync('thirdSession', thirdSession)
+    },
+    UPDATE_USER_ENABLE_AUTO_LOGIN (state, enableAutoLogin = 0) {
+      state.user.enableAutoLogin = enableAutoLogin
+      wx.setStorageSync('enableAutoLogin', enableAutoLogin)
     },
     UPDATE_USER_OPEN_ID (state, openId) {
       // console.log('UPDATE_USER_OPEN_ID', openId)

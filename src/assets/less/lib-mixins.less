@@ -5,7 +5,7 @@
   @imgW: unit(image-width(@imgUrl),rpx) * @scale;
   @imgH: unit(image-height(@imgUrl),rpx) * @scale;
 }
-// 按照缩放比例返回背景图
+// 按照缩放比例返回背景图（H5专用，小程序不支持本地图片作为背景故不能用）
 .bgImg(@imgUrl, @scale:1) {
   @url: url("@{imgUrl}?scale=@{scale}");
   @imgW: unit(image-width(@imgUrl),rpx) * @scale;
@@ -57,7 +57,7 @@
   line-height: @line-height;
   max-height: @line-height * @lines;
 }
-// 一像素边线
+// 一像素边线（H5专用，小程序直接写1rpx即可）
 .scale-1rpx(@radius1:0rpx, @radius2:0rpx, @radius3:0rpx, @radius4:0rpx) {
   position: relative;
   border-width: 0;

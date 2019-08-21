@@ -1,0 +1,61 @@
+<template>
+  <view class="main-wrapper pack1__page1">
+    <!-- 自定义状态栏时需要自己添加返回按钮 -->
+    <navCustom></navCustom>
+    <view class="pack1__page1__header-title pos-r ta-c" style="{{'margin-top:'+ statusBarHeight +'px;'}}">page1</view>
+  </view>
+</template>
+<config>
+{
+  navigationBarTitleText: 'page1',
+  navigationStyle: 'custom',
+  usingComponents: {
+    navCustom: '~@/components/navCustom'
+  }
+}
+</config>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import initPage from '@/mixins/initPage.js'
+// import apiActions from '@/config/api.js'
+import { mapState, mapActions } from '@wepy/x'
+import { errorFormatter } from '@/config/utils.js'
+wepy.page({
+  store,
+  mixins: [initPage],
+  data: {
+    code: '',
+    formId: '',
+    formIdList: []
+  },
+  computed: {
+    ...mapState({
+      statusBarHeight: state => state.system.statusBarHeight || 20
+    })
+  },
+  methods: {
+  },
+  async onLoad () {
+    wx.showLoading({ title: '正在加载...', mask: true })
+    try {
+      // TODO 页面前置判断接口
+      wx.hideLoading()
+    } catch (error) {
+      wx.hideLoading()
+      wx.showToast({ duration: 3000, title: errorFormatter(error, 'home onload'), icon: 'none' })
+    }
+  }
+})
+</script>  
+<style lang="less">
+.pack1__page1 {
+}
+.pack1__page1__header-title {
+  height: 44px;
+  line-height: 44px;
+  margin-top: 52rpx;
+  font-size: 18px;
+  font-weight: bold;
+}
+</style> 

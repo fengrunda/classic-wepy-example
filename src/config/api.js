@@ -1,9 +1,7 @@
 import wepy from '@wepy/core'
 import store from '@/store'
-// import { redirectToLogin } from '@/config/utils.js'
 // 域名列表
-const hostList = store.state.buildType === 'test' ? ['https://weixin.test.rfmember.net/zizai'] : ['https://weixin.thinkinpower.com/zizai']
-// const hostList = ['https://weixin.test.rfmember.net/zizai']
+const hostList = store.state.buildType === 'test' ? ['https://weixin.test.rfmember.net/zizai'] : ['https://weixin.thinkinpower.com/zizai'] // TODO 需要根据业务域名修改
 // 接口列表
 const api = {
   /* base */
@@ -297,20 +295,15 @@ Object.keys(api).map(moduleName => {
           }, options)
           requestParams.header = Object.assign({
             'Content-type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json;charset=utf-8',
-            'ApiEnv': store.state.buildType === 'prerelease' ? 'testextra' : '',
-            'Accept-Language': store.state.system.language
+            'Accept': 'application/json;charset=utf-8'
           }, (api[moduleName][key].header || {}), (options.header || {}))
           try {
             const { statusCode = 0, data = {} } = await wepy.wx.request(requestParams) || {}
             // console.log(statusCode, data, header)
             if (statusCode === 200) {
-              if (data.status === 200) {
+              if (data.status === 200) { // TODO 需要修改为接口成功状态码
                 resolve(data)
                 return
-              } else if (data.status === 403 || data.status === 402) {
-                // console.log('toLogin', store.state.page)
-                // redirectToLogin(store.state.page.route, store.state.page.options)
               }
             }
             console.error('apiActions', moduleName, key, requestParams, data)

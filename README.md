@@ -57,19 +57,13 @@ yarn run clean
         |   |-- tabBar.wpy // 自定义tabbar
         |-- config
         |   |-- api.js // api接口配置
-        |   |-- thirdLogin.js // 微信登录方法
+        |   |-- crossNav.js // 跳转其他小程序配置
+        |   |-- thirdLogin.js // 微信登录及用户登录方法
         |   |-- utils.js // 公共方法
         |-- custom-tab-bar // 空的自定义tabbar，使用components代替
         |   |-- index.wpy
         |-- filters // wxs filter
         |   |-- index.wxs
-        |-- i18n // 主包国际化文件
-        |   |-- en.js
-        |   |-- en.wxs
-        |   |-- index.js
-        |   |-- index.wxs
-        |   |-- zh_CN.js
-        |   |-- zh_CN.wxs
         |-- mixins
         |   |-- initPage.js
         |-- pages // 主包页面文件
@@ -81,4 +75,7 @@ yarn run clean
         |       |-- 
         |-- store // vuex
         |   |-- index.js
+        |-- subPackages // 分包目录
+            |-- pack1 // 分包页面文件
+            |   |-- page1.wpy
             
