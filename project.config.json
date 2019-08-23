@@ -10,10 +10,37 @@
 		"checkInvalidKey": true
 	},
 	"compileType": "miniprogram",
-	"appid": "touristappid",
+	"appid": "wx60858250ffd341e0",
 	"projectname": "classic-wepy-example",
 	"miniprogramRoot": "weapp/",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
-	"condition": {}
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"miniprogram": {
+			"current": 0,
+			"list": [
+				{
+					"id": -1,
+					"name": "page1",
+					"pathName": "subPackages/pack1/page1",
+					"scene": null
+				}
+			]
+		}
+	}
 }
