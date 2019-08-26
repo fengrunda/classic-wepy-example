@@ -42,7 +42,12 @@
     navigationBarTitleText: '自在社区享家',
     navigationBarTextStyle: 'black'
   },
-  navigateToMiniProgramAppIdList: [] // 需要调整到其他小程序的appId列表
+  navigateToMiniProgramAppIdList: [], // 需要调整到其他小程序的appId列表
+  permission: {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  }
 }
 </config>
 <script>

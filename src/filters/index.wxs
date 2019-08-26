@@ -5,10 +5,10 @@
  * @param {String} style 格式化时使用的样式 decimal currency percent
  * @param {String} currency 在货币格式化中使用的货币符号 CNY USD EUR
  */
-var formatAmount = function (amount = 0, style = 'decimal', currency = 'CNY') {
+var formatAmount = function (amount = 0, style = 'currency', currency = 'CNY') {
   let amountNum = parseFloat(amount)
   amountNum = amountNum >= 0 ? amountNum : 0
-  return amountNum.toLocaleString('zh', { minimumFractionDigits: 2, maximumFractionDigits: 8, style, currency })
+  return amountNum.toLocaleString('zh', { minimumFractionDigits: 2, maximumFractionDigits: 8, style: style, currency: currency })
 }
 /**
  * 高亮关键字
