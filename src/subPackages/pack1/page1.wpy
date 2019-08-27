@@ -5,9 +5,14 @@
     <view class="pack1__page1__header-title pos-r ta-c" style="{{'margin-top:'+ statusBarHeight +'px;'}}">page1</view>
     <view class="map-container fxsh-1 fxg-1 d-b pos-r">
       <map id="map" class="pos-a l-0 t-0 r-0 b-0" markers="{{markers}}" bindmarkertap="markertap" bindupdated="handleUpdated" bindregionchange="handleRegionchange" bindbegin="handleRegionchangeBegin" bindend="handleRegionchangeEnd" polyline="{{polyline}}" longitude="{{locationInfo.longitude}}" latitude="{{locationInfo.latitude}}" scale="14" show-location="{{true}}">
-        <cover-image class="select-point" src="/statics/images/icon_index_home_blue.png"></cover-image>
+        <image class="select-point" src="@/assets/images/icon_location_r.png"></image>
+        <button bindtap="handleResetPosition" class="reset-position-btn">
+          <image class="reset-position-btn__icon d-b" src="@/assets/images/icon_location_b.png"></image>
+        </button>
       </map>
+      <input class="pack1__page1__input_search-location pos-r d-b mt-30 ml-30 mr-30" type="text">
     </view>
+    <official-account class="pos-r d-b"></official-account>
   </view>
 </template>
 <config>
@@ -92,6 +97,8 @@ wepy.page({
               longitude,
               latitude
             },
+            get_poi: 1,
+            poi_options: 'radius=50&policy=2',
             success: ({ status, message, result }) => {
               console.log(result)
             },
@@ -99,6 +106,21 @@ wepy.page({
               console.log({ status, message })
             }
           })
+        }
+      })
+    },
+    handleResetPosition (e) {
+      console.log('handleResetPosition', e)
+      this.mapCtx.moveToLocation({
+        location: {
+          longitude: this.locationInfo.longitude,
+          latitude: this.locationInfo.latitude
+        },
+        success: ({ status, message, result }) => {
+          console.log(result)
+        },
+        fail: ({ status, message }) => {
+          console.log({ status, message })
         }
       })
     }
@@ -123,11 +145,14 @@ wepy.page({
         console.log('locationInfo', this.locationInfo)
         // this.markers[0].latitude = this.locationInfo.latitude
         // this.markers[0].longitude = this.locationInfo.longitude
-        this.qqmapsdk.reverseGeocoder({
+        this.qqmapsdk.reverseGeocoder({ // https://lbs.qq.com/qqmap_wx_jssdk/method-reverseGeocoder.htmlhttps://lbs.qq.com/qqmap_wx_jssdk/method-reverseGeocoder.html
           location: {
             longitude: this.locationInfo.longitude,
             latitude: this.locationInfo.latitude
           },
+          // location: { latitude: 23.120841, longitude: 113.329396 },
+          get_poi: 1,
+          poi_options: 'radius=500&policy=2',
           success: ({ status, message, result }) => {
             console.log(result)
           },
@@ -146,6 +171,8 @@ wepy.page({
 })
 </script>
 <style lang="less">
+@import '~@/assets/less/lib-base.less';
+@import '~@/assets/less/lib-mixins.less';
 .pack1__page1 {
 }
 .pack1__page1__header-title {
@@ -164,7 +191,26 @@ wepy.page({
   left: 50%;
   top: 50%;
   transform: translate(-50%, -100%);
-  width: 30px;
-  height: 30px;
+  .imgSize('../images/icon_location_r.png');
+  width: @imgW;
+  height: @imgH;
+}
+.pack1__page1__input_search-location {
+  height: 50rpx;
+  background-color: #fff;
+  line-height: 50px;
+}
+.reset-position-btn {
+  position: absolute;
+  left: 30rpx;
+  bottom: 100rpx;
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+.reset-position-btn__icon {
+  .imgSize('../images/icon_location_b.png');
+  width: @imgW;
+  height: @imgH;
 }
 </style> 
