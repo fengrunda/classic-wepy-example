@@ -27,13 +27,18 @@
         <text class="form-group__item__text d-ib fxg-0 fxsh-0 mr-20">choose data</text>
         <text class="form-group__item__text d-ib fxg-1 fxsh-1 ta-r mr-20">{{pickerDataList[pickerDataIndex].text}} ￥{{filter.formatAmount(pickerDataList[pickerDataIndex].price)}}</text>
         <view class="icon-arrow_down fxg-0 fxsh-0 d-ib mt-40"></view>
-      </view> 
+      </view>
     </picker>
     <navigator class="d-b ml-30 mr-30 mt-40 mt-20 ta-c" url="/subPackages/pack1/page1?param1=123456">navToPage1</navigator>
     <navigator class="d-b ml-30 mr-30 mt-40 mt-20 ta-c" url="/pages/webview?webviewUrl={{webviewUrl}}&webviewLogin=1">navToWebview</navigator>
     <button bindtap="handleNavToMiniProgram" data-sapp-type="carpark" data-path-type="home" class="d-b ml-30 mr-30 mt-40 mt-20">navToMiniProgram</button>
+
+    <button bindtap="handleCreatePoster" class="d-b ml-30 mr-30 mt-40 mt-20">createPoster</button>
+    <canvas style="width: 300px; height: 200px;" canvas-id="firstCanvas"></canvas>
+    <image wx:if="{{!!posterSrc}}" src="{{posterSrc}}"></image>
+
     <tabBar></tabBar>
-    
+
   </view>
 </template>
 <wxs module="filter" src="../filters/index.wxs"></wxs>
@@ -78,7 +83,8 @@ wepy.page({
         text: 'item3',
         price: 64494.15654
       }
-    ]
+    ],
+    posterSrc: ''
   },
   computed: {
     ...mapState({ // 获取store里的state
@@ -138,6 +144,12 @@ wepy.page({
     },
     handleChangePickerData (e) {
       this.pickerDataIndex = e.$wx.detail.value
+    },
+    async handleCreatePoster (e) {
+      console.log('handleCreatePoster')
+      const res = await wepy.wx.getImageInfo({ src: '/statics/images/poster.png' })
+      console.log(res)
+      var context = wx.createCanvasContext('firstCanvas')
     }
   },
   async onShow () {

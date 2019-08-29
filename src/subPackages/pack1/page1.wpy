@@ -12,6 +12,7 @@
       </map>
       <input class="pack1__page1__input_search-location pos-r d-b mt-30 ml-30 mr-30" type="text">
     </view>
+
     <official-account class="pos-r d-b"></official-account>
   </view>
 </template>
@@ -110,17 +111,17 @@ wepy.page({
       })
     },
     handleResetPosition (e) {
-      console.log('handleResetPosition', e)
+      console.log('handleResetPosition', e, this.locationInfo)
       this.mapCtx.moveToLocation({
         location: {
           longitude: this.locationInfo.longitude,
           latitude: this.locationInfo.latitude
         },
         success: ({ status, message, result }) => {
-          console.log(result)
+          console.log('moveToLocation success', { status, message, result })
         },
         fail: ({ status, message }) => {
-          console.log({ status, message })
+          console.log('moveToLocation success', { status, message })
         }
       })
     }

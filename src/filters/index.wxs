@@ -6,7 +6,7 @@
  * @param {String} currency 在货币格式化中使用的货币符号 CNY USD EUR
  */
 var formatAmount = function (amount = 0, style = 'currency', currency = 'CNY') {
-  let amountNum = parseFloat(amount)
+  var amountNum = parseFloat(amount)
   amountNum = amountNum >= 0 ? amountNum : 0
   return amountNum.toLocaleString('zh', { minimumFractionDigits: 2, maximumFractionDigits: 8, style: style, currency: currency })
 }
