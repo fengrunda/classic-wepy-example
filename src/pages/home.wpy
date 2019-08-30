@@ -34,8 +34,8 @@
     <button bindtap="handleNavToMiniProgram" data-sapp-type="carpark" data-path-type="home" class="d-b ml-30 mr-30 mt-40 mt-20">navToMiniProgram</button>
 
     <button bindtap="handleCreatePoster" class="d-b ml-30 mr-30 mt-40 mt-20">createPoster</button>
-    <canvas style="width: 300px; height: 200px;" canvas-id="firstCanvas"></canvas>
-    <image wx:if="{{!!posterSrc}}" src="{{posterSrc}}"></image>
+    <canvas class="pos-r d-b" canvas-id="firstCanvas" style="width:750px;height:1000px;"></canvas>
+    <image class="poster" wx:if="{{!!posterSrc}}" src="{{posterSrc}}"></image>
 
     <tabBar></tabBar>
 
@@ -84,7 +84,8 @@ wepy.page({
         price: 64494.15654
       }
     ],
-    posterSrc: ''
+    posterSrc: '',
+    ctx: null
   },
   computed: {
     ...mapState({ // 获取store里的state
@@ -149,8 +150,46 @@ wepy.page({
       console.log('handleCreatePoster')
       const res = await wepy.wx.getImageInfo({ src: '/statics/images/poster.png' })
       console.log(res)
-      var context = wx.createCanvasContext('firstCanvas')
+
+      // this.ctx.drawImage('/statics/images/poster.png', 0, 0, res.width, res.height)
+      this.ctx.drawImage('/statics/images/poster.png', 0, 0, res.width, res.height, 0, 0, res.width, res.height)
+      this.ctx.draw(false, async () => {
+        const { tempFilePath = '' } = await wepy.wx.canvasToTempFilePath({
+          canvasId: 'firstCanvas',
+          x: 0,
+          y: 0,
+          width: res.width,
+          height: res.height,
+          destWidth: res.width,
+          destHeight: res.height,
+          quality: 1,
+          type: 'png'
+        })
+        this.posterSrc = tempFilePath
+        const { height, width, type, path } = await wepy.wx.getImageInfo({ src: tempFilePath })
+        console.log({ height, width, type, path })
+      })
     }
+  },
+  onLoad () {
+    const query = wx.createSelectorQuery()
+    const a = query.select('canvas')
+    console.log('query.select', a)
+    this.ctx = wx.createCanvasContext('firstCanvas')
+    // save the default fill style
+    this.ctx.save()
+    this.ctx.setFillStyle('red')
+    this.ctx.fillRect(10, 10, 300, 100)
+
+    // restore to the previous saved state
+    this.ctx.restore()
+    this.ctx.fillRect(50, 50, 300, 100)
+
+    this.ctx.draw()
+    console.log('ctx', this.ctx)
+  },
+  canvasIdErrorCallback (e) {
+    console.error(e.detail.errMsg)
   },
   async onShow () {
     wx.showLoading({ title: '正在加载...', mask: true })
@@ -173,5 +212,9 @@ wepy.page({
 @import '~@/assets/less/lib-base.less';
 @import '~@/assets/less/lib-mixins.less';
 .home {
+}
+.poster {
+  width: 750px;
+  height: 1000px;
 }
 </style>
