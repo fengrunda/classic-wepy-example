@@ -132,14 +132,42 @@
   .prLoop(( @counter - 10));
 }
 .prLoop(80);
+
+.bz-bb {
+  box-sizing: border-box;
+}
+
+.bz-cb {
+  box-sizing: content-box;
+}
 /*---------------------------------------------------布局 end -----------------------------------------------------*/
 /*---------------------------------------------------文本 start -----------------------------------------------------*/
+.fzLoop(@counter) when (@counter < = 48) {
+  .fz-@{counter} {
+    font-size: unit(@counter, rpx) !important;
+  }
+  .fzLoop(( @counter + 4));
+}
+.fzLoop(20);
+
 .fw-b {
   font-weight: bold;
 }
 
 .fw-n {
   font-weight: normal;
+}
+
+.wob-n {
+  word-break: normal;
+}
+
+.wob-k {
+  word-break: keep-all;
+}
+
+.wob-ba {
+  word-break: break-all;
 }
 
 .wow-b {
@@ -226,6 +254,14 @@
 
 .fxb-100 {
   flex-basis: 100%;
+}
+
+.fxb-50 {
+  flex-basis: 50%;
+}
+
+.fxb-33 {
+  flex-basis: 33%;
 }
 
 .fxg-0 {

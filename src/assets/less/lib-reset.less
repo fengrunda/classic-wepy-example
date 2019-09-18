@@ -48,7 +48,11 @@ button {
   // opacity: 1;
   // filter: brightness(1);
   // transition: all .3s ease;
+  line-height: 1.5;
+  border-radius: 0;
+  padding: 0;
   margin: 0;
+  background-color: transparent;
   &::after {
     border: 0;
   }
@@ -91,3 +95,37 @@ navigator {
 //     margin-top: -8rpx;
 //   }
 // }
+switch {
+  &[checked] {
+    .wx-switch-input {
+      background-color: rgba(208, 73, 0, 0.5) !important;
+      &::after {
+        background-color: #d04900 !important;
+      }
+    }
+  }
+}
+.wx-switch-input {
+  width: 80rpx !important;
+  height: 28rpx !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background-color: #999 !important;
+}
+.wx-switch-input::before {
+  width: 80rpx !important;
+  height: 28rpx !important;
+  padding: 0 !important;
+  border: 0 !important;
+  display: none;
+} // 白色挡板
+.wx-switch-input::after {
+  top: 50% !important;
+  margin-top: -20rpx !important;
+  width: 40rpx !important;
+  height: 40rpx !important;
+  border: 0 !important;
+  background-color: #fff !important;
+  // box-shadow: 0 0 4rpx 0 rgba(0, 0, 0, 1) !important;
+  // box-shadow: none !important;
+} //中间小圆球

@@ -14,7 +14,7 @@ wepy.component({
   options: {
     styleIsolation: 'apply-shared'
   },
-  props: {
+  properties: {
     // webViewRedirectUrl: {
     //   type: String,
     //   default: ''
@@ -76,7 +76,7 @@ wepy.component({
       }
     }
   },
-  created () {
+  attached () {
     try {
       this.clientRect = wx.getMenuButtonBoundingClientRect()
     } catch (error) {
