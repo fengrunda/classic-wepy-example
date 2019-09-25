@@ -1,0 +1,247 @@
+<template>
+  <cover-view class="dialog-share d-f fxd-c jc-c ai-c {{(visible && openning)?'fade-in':''}} {{openning?'':'op-1'}} {{closing?'transition op-0':''}}" bindanimationstart="handleAnimationStart" bindanimationend="handleAnimationEnd" bindtransitionend="handleTransitionEnd">
+    <cover-view class="dialog-mask" bindtap="handleClose"></cover-view>
+    <canvas class="canvas" canvas-id="firstCanvas" style="width:{{posterW}}px;height:{{posterH}}px;" wx:if="{{!posterSrc || true}}"></canvas>
+    <cover-view class="dialog-share__wrapper pos-r pl-30 pr-30 pt-30 pb-30" catchtab="stopEvent">
+      <!-- <canvas canvas-id="firstCanvas"></canvas> -->
+      <cover-view class="d-b pos-r zi-10" style="padding-top:{{posterH / posterW * 100}}%;">
+        <cover-image class="poster pos-a t-0 b-0 l-0 r-0" wx:if="{{!!posterSrc}}" src="{{posterSrc}}" mode="aspectFit"></cover-image>
+      </cover-view>
+      <!-- <button bindtap="handleCreatePoster">生成图片</button> -->
+      <button bindtap="handleSavePoster">保存图片</button>
+    </cover-view>
+  </cover-view>
+</template>
+
+<config>
+{
+  component: true,
+  usingComponents: {
+  }
+}
+</config>
+<script>
+import wepy from '@wepy/core'
+// import store from '@/store'
+wepy.component({
+  // store,
+  options: {
+    styleIsolation: 'apply-shared'
+  },
+  properties: {
+    visible: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data: {
+    isVisiblePre: false,
+    closing: false,
+    openning: true,
+    ctx: null,
+    posterSrc: '',
+    posterW: 750,
+    posterH: 1000
+  },
+  computed: {
+  },
+  methods: {
+    async handleSavePoster (e) {
+      try {
+        await wepy.wx.saveImageToPhotosAlbum({ filePath: this.posterSrc })
+        wx.showToast({ duration: 1500, title: '保存成功', icon: 'success' })
+        console.log('handleSavePoster success', e)
+      } catch (error) {
+        wx.showToast({ duration: 3000, title: '保存失败', icon: 'none' })
+        console.log('handleSavePoster error', error)
+      }
+    },
+    stopEvent (e) {
+      console.log('stopEvent', e)
+    },
+    handleClose (e) {
+      if (this.openning || this.closing) {
+        return
+      }
+      console.log('handleClose', e)
+      // this.$wx.triggerEvent('close', { value: false })
+      this.closing = true
+      this.openning = false
+    },
+    handleTransitionEnd (e) {
+      if (this.openning) {
+        return
+      }
+      console.log('handleTransitionend', e)
+      this.$wx.triggerEvent('close', { value: false })
+      this.closing = false
+      this.openning = true
+    },
+    handleAnimationStart (e) {
+      console.log('handleAnimationStart', e)
+      this.openning = true
+      this.closing = false
+    },
+    handleAnimationEnd (e) {
+      console.log('handleAnimationEnd', e)
+      this.openning = false
+    },
+    drawText ({ x = 0, y = 0, width = 300, size = 36, color = '#333', align = 'left', baseline = 'top', text = '', bold = false } = {}) {
+      console.log('渲染文字')
+      this.ctx.save()
+      this.ctx.setFillStyle(color)
+      this.ctx.setFontSize(size)
+      this.ctx.setTextAlign(align)
+      this.ctx.setTextBaseline(baseline)
+      if (bold) {
+        console.log('字体加粗')
+        this.ctx.fillText(text, x, y - 0.5)
+        this.ctx.fillText(text, x - 0.5, y)
+      }
+      this.ctx.fillText(text, x, y)
+      if (bold) {
+        this.ctx.fillText(text, x, y + 0.5)
+        this.ctx.fillText(text, x + 0.5, y)
+      }
+      this.ctx.restore()
+    },
+    textWrap ({ x = 0, y = 0, width = 300, lineHeight = 48, line = 9, size = 36, color = '#333', align = 'left', baseline = 'top', text = '', bold = false } = {}) {
+      console.log('文本换行')
+      var td = Math.ceil(width / (size))
+      var tr = Math.ceil(text.length / td)
+      for (var i = 0; i < tr; i++) {
+        var txt = {
+          x,
+          y: y + (i * lineHeight),
+          color,
+          size,
+          align,
+          baseline,
+          text: text.substring(i * td, (i + 1) * td),
+          bold
+        }
+        if (i < line) {
+          if (i === line - 1) {
+            txt.text = txt.text.substring(0, txt.text.length - 3) + '...'
+          }
+          this.drawText(txt)
+        }
+      }
+    }
+  },
+  canvasIdErrorCallback (e) {
+    console.error(e.detail.errMsg)
+  },
+  async attached () {
+    const query = wx.createSelectorQuery()
+    const canvas = query.select('canvas')
+    console.log('query.select', canvas)
+    this.ctx = wx.createCanvasContext('firstCanvas', this.$wx)
+    this.ctx.drawImage('/statics/images/poster.png', 0, 0, this.posterW, this.posterH, 0, 0, this.posterW, this.posterH)
+    // this.ctx.font = 'font-style font-variant font-weight line-height font-family'
+    // this.ctx.font = 'normal normal normal 40px'
+    this.textWrap({ x: 0, y: 0, width: 300, lineHeight: 48, line: 9, size: 36, color: '#000', align: 'left', baseline: 'top', text: 'Hello 的还是看你的😯️🏉️🏐🏏🥏️🔄🔺🔛撒旦法士大夫时代感阿范是的发噶是短发撒大法师打发大是大非Hello 的发撒旦法士大夫时代感阿范是的发噶是短发撒大法师打发大是大非', bold: false })
+    this.ctx.draw(false, async () => {
+      console.log('draw callback')
+      wx.canvasToTempFilePath({
+        canvasId: 'firstCanvas',
+        x: 0,
+        y: 0,
+        width: this.posterW,
+        height: this.posterH,
+        destWidth: this.posterW,
+        destHeight: this.posterH,
+        quality: 1,
+        type: 'jpg',
+        success: res => {
+          console.log('canvasToTempFilePath success', res)
+          this.posterSrc = res.tempFilePath
+        },
+        fail: error => {
+          console.log('canvasToTempFilePath error', error)
+        }
+      }, this.$wx)
+    })
+  }
+})
+</script>
+<style lang="less">
+.dialog-share {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  // &::before {
+  //   position: fixed;
+  //   top: 0;
+  //   right: 0;
+  //   bottom: 0;
+  //   left: 0;
+  //   background-color: #fff;
+  //   background: rgba(0, 0, 0, 0.6);
+  //   content: '';
+  // }
+  &.op-1 {
+    opacity: 1;
+  }
+  &.op-0 {
+    opacity: 0;
+  }
+  &.transition {
+    transition: opacity 0.3s ease-out;
+  }
+  .canvas {
+    position: absolute;
+    top: 9999px;
+    // top: 0;
+    left: 0;
+    // position: fixed;
+    // z-index: -1;
+    // background-color: aqua;
+    width: 750px;
+    height: 1000px;
+    // opacity: 0.5;
+    // transform: translate(-50%,-50%) scale(0.5);
+    // transform-origin: 50% 50%;
+    // visibility: hidden;
+  }
+}
+.text {
+  color: rgb(173, 44, 44);
+}
+.fade-in {
+  animation-duration: 0.3s;
+  animation-name: fadeIn;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.dialog-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+}
+.dialog-share__wrapper {
+  width: 80%;
+  max-height: 80%;
+  background-color: #fff;
+}
+.poster {
+  width: 100%;
+  height: 100%;
+}
+</style>

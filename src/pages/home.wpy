@@ -61,12 +61,9 @@
     <navigator class="d-b ml-30 mr-30 mt-40 mt-20 ta-c" url="/pages/webview?webviewUrl={{webviewUrl}}&webviewLogin=1">navToWebview</navigator>
     <button bindtap="handleNavToMiniProgram" data-sapp-type="carpark" data-path-type="home" class="d-b ml-30 mr-30 mt-40 mt-20">navToMiniProgram</button>
 
-    <button bindtap="handleCreatePoster" class="d-b ml-30 mr-30 mt-40 mt-20">createPoster</button>
-    <canvas class="pos-r d-b" canvas-id="firstCanvas" style="width:750px;height:1000px;"></canvas>
-    <image class="poster" wx:if="{{!!posterSrc}}" src="{{posterSrc}}"></image>
-
+    <button bindtap="handleOpenDialogShare" class="d-b ml-30 mr-30 mt-40 mt-20">createPoster</button>
     <tabBar></tabBar>
-
+    <dialogShare v-if="dialogShare.visible" visible="{{dialogShare.visible}}" bind:close="handleCloseDialogShare"></dialogShare>
   </view>
 </template>
 <wxs module="filter" src="../filters/index.wxs"></wxs>
@@ -76,7 +73,8 @@
   // navigationStyle: 'custom',
   usingComponents: {
     tabBar: '~@/components/tabBar',
-    customTabBar: '~@/custom-tab-bar/index'
+    customTabBar: '~@/custom-tab-bar/index',
+    dialogShare: '~@/components/dialogShare'
   }
 }
 </config>
@@ -120,8 +118,9 @@ wepy.page({
       encryptedData: '',
       iv: ''
     },
-    posterSrc: '',
-    ctx: null
+    dialogShare: {
+      visible: false
+    }
   },
   computed: {
     ...mapState({ // 获取store里的state
@@ -190,47 +189,14 @@ wepy.page({
     handleChangePickerData (e) {
       this.pickerDataIndex = e.$wx.detail.value
     },
-    async handleCreatePoster (e) {
-      console.log('handleCreatePoster')
-      const res = await wepy.wx.getImageInfo({ src: '/statics/images/poster.png' })
-      console.log(res)
-
-      // this.ctx.drawImage('/statics/images/poster.png', 0, 0, res.width, res.height)
-      this.ctx.drawImage('/statics/images/poster.png', 0, 0, res.width, res.height, 0, 0, res.width, res.height)
-      this.ctx.draw(false, async () => {
-        const { tempFilePath = '' } = await wepy.wx.canvasToTempFilePath({
-          canvasId: 'firstCanvas',
-          x: 0,
-          y: 0,
-          width: res.width,
-          height: res.height,
-          destWidth: res.width,
-          destHeight: res.height,
-          quality: 1,
-          type: 'png'
-        })
-        this.posterSrc = tempFilePath
-        const { height, width, type, path } = await wepy.wx.getImageInfo({ src: tempFilePath })
-        console.log({ height, width, type, path })
-      })
+    handleOpenDialogShare (e) {
+      this.dialogShare.visible = true
+    },
+    handleCloseDialogShare (e) {
+      this.dialogShare.visible = false
     }
   },
   onLoad () {
-    const query = wx.createSelectorQuery()
-    const a = query.select('canvas')
-    console.log('query.select', a)
-    this.ctx = wx.createCanvasContext('firstCanvas')
-    // save the default fill style
-    this.ctx.save()
-    this.ctx.setFillStyle('red')
-    this.ctx.fillRect(10, 10, 300, 100)
-
-    // restore to the previous saved state
-    this.ctx.restore()
-    this.ctx.fillRect(50, 50, 300, 100)
-
-    this.ctx.draw()
-    console.log('ctx', this.ctx)
   },
   canvasIdErrorCallback (e) {
     console.error(e.detail.errMsg)
@@ -256,9 +222,5 @@ wepy.page({
 @import '~@/assets/less/lib-base.less';
 @import '~@/assets/less/lib-mixins.less';
 .home {
-}
-.poster {
-  width: 750px;
-  height: 1000px;
 }
 </style> 
