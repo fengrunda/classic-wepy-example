@@ -1,80 +1,22 @@
 <template>
-  <view class="main-wrapper home pb-116">
-    <view class="d-f border_b mt-20 ml-30 mr-30">
-      <text class="d-ib fxg-0 fxsh-0">openId：</text>
-      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{openId}}</text>
-      <button bindtap="handleSetClipboard" data-content="{{openId}}" class="fz-28 pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
+  <view class="main-wrapper home">
+    <view class="custom-title c-black_80 pos-a ta-c l-0 r-0" style="{{'top:'+ statusBarHeight +'px;'}}">Home</view>
+    <navigator class="home__btn-demo pt-10 pb-10 pl-30 pr-30 fz-28 bdrs-8 c-white_80 zi-10" url="/pages/demo" wx:if="{{buildType !== 'production'}}">demo</navigator>
+    <view class="pos-r fxg-1 fxsh-1 fxd-c d-f jc-c" style="{{'padding-top:'+ (statusBarHeight + 44) +'px;'}}">
+      <button class="" bindtap="handleOpenDialogLogin" data-url="/subPackages/questionnaire/list">问卷调查</button>
     </view>
-    <view class="d-f border_b mt-20 ml-30 mr-30">
-      <text class="d-ib fxg-0 fxsh-0">unionId：</text>
-      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{unionId}}</text>
-      <button bindtap="handleSetClipboard" data-content="{{unionId}}" class="fz-28 pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
-    </view>
-    <button bindtap="handleGetCode" class="d-b ml-30 mr-30 mt-20">getCode</button>
-    <view class="d-f border_b mt-20 ml-30 mr-30">
-      <text class="d-ib fxg-0 fxsh-0">code：</text>
-      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{code}}</text>
-      <button bindtap="handleSetClipboard" data-content="{{code}}" class="fz-28 pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
-    </view>
-    <button bindgetuserinfo="handleGetUserInfo" open-type="getUserInfo" class="d-b ml-30 mr-30 mt-20">getUserInfo</button>
-    <view class="d-f border_b mt-20 ml-30 mr-30">
-      <text class="d-ib fxg-0 fxsh-0">encryptedData：</text>
-      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{userInfo.encryptedData}}</text>
-      <button bindtap="handleSetClipboard" data-content="{{userInfo.encryptedData}}" class="fz-28 pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
-    </view>
-    <view class="d-f border_b mt-20 ml-30 mr-30">
-      <text class="d-ib fxg-0 fxsh-0">iv：</text>
-      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{userInfo.iv}}</text>
-      <button bindtap="handleSetClipboard" data-content="{{userInfo.iv}}" class="fz-28 pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
-    </view>
-    <button bindgetphonenumber="handleGetPhoneNumber" open-type="getPhoneNumber" class="d-b ml-30 mr-30 mt-20">getPhoneNumber</button>
-    <view class="d-f border_b mt-20 ml-30 mr-30">
-      <text class="d-ib fxg-0 fxsh-0">encryptedData：</text>
-      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{userPhone.encryptedData}}</text>
-      <button bindtap="handleSetClipboard" data-content="{{userPhone.encryptedData}}" class="fz-28 pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
-    </view>
-    <view class="d-f border_b mt-20 ml-30 mr-30">
-      <text class="d-ib fxg-0 fxsh-0">iv：</text>
-      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{userPhone.iv}}</text>
-      <button bindtap="handleSetClipboard" data-content="{{userPhone.iv}}" class="fz-28 pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
-    </view>
-    <form report-submit="{{true}}" bindsubmit="handleFormSubmit" class="d-b mt-20">
-      <button class="d-b ml-30 mr-30" formType="submit">getFormId</button>
-      <view class="d-f border_b mt-20 ml-30 mr-30" wx:for="{{formIdList}}" wx:for-index="idx" wx:for-item="formId" wx:key="idx">
-        <text class="d-ib fxg-0 fxsh-0">formId{{idx}}：</text>
-        <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{formId}}</text>
-        <button bindtap="handleSetClipboard" data-content="{{formId}}" class="fz-28 pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
-      </view>
-    </form>
-    <picker class="d-b pl-30 pr-30 mt-20" bindchange="handleChangePickerData" value="{{pickerDataIndex}}" range-key="text" range="{{pickerDataList}}">
-      <view class="d-f border_b">
-        <text class="form-group__item__text d-ib fxg-0 fxsh-0 mr-20">choose data</text>
-        <text class="form-group__item__text d-ib fxg-1 fxsh-1 ta-r wob-ba mr-20">{{pickerDataList[pickerDataIndex].text}} {{filter.formatAmount(pickerDataList[pickerDataIndex].price)}}</text>
-        <view class="icon-arrow_down fxg-0 fxsh-0 d-ib mt-40"></view>
-      </view>
-    </picker>
-    <view class="d-f ai-fe border_b mt-20 ml-30 mr-30 pb-10">
-      <text class="d-ib fxg-0 fxsh-0">switch：</text>
-      <switch class="d-ib fxg-1 fxsh-1 ta-r" color="#d45454" checked="{{true}}"></switch>
-    </view>
-    <navigator class="d-b ml-30 mr-30 mt-40 mt-20 ta-c" url="/subPackages/pack1/page1?param1=123456">navToPage1</navigator>
-    <navigator class="d-b ml-30 mr-30 mt-40 mt-20 ta-c" url="/pages/webview?webviewUrl={{webviewUrl}}&webviewLogin=1">navToWebview</navigator>
-    <button bindtap="handleNavToMiniProgram" data-sapp-type="carpark" data-path-type="home" class="d-b ml-30 mr-30 mt-40 mt-20">navToMiniProgram</button>
-
-    <button bindtap="handleOpenDialogShare" class="d-b ml-30 mr-30 mt-40 mt-20">createPoster</button>
-    <tabBar></tabBar>
-    <dialogShare v-if="dialogShare.visible" visible="{{dialogShare.visible}}" bind:close="handleCloseDialogShare"></dialogShare>
+    <!-- <tabBar></tabBar> -->
+    <dialogLogin v-if="dialogLogin.visible" visible="{{dialogLogin.visible}}" hint="需要登录后才能填写问卷" bind:close="handleCloseDialogLogin" bind:logined="handleLogined" data-url="{{dialogLogin.url}}"></dialogLogin>
   </view>
 </template>
-<wxs module="filter" src="../filters/index.wxs"></wxs>
-<config> 
+<config>
 {
-  navigationBarTitleText: 'wepy demo',
-  // navigationStyle: 'custom',
+  navigationBarTitleText: 'wepy2',
+  navigationStyle: 'custom',
   usingComponents: {
-    tabBar: '~@/components/tabBar',
-    customTabBar: '~@/custom-tab-bar/index',
-    dialogShare: '~@/components/dialogShare'
+    // tabBar: '~@/components/tabBar',
+    // customTabBar: '~@/custom-tab-bar/index',
+    dialogLogin: '~@/components/dialogLogin'
   }
 }
 </config>
@@ -85,130 +27,24 @@ import { mapState, mapActions } from '@wepy/x'
 import initPage from '@/mixins/initPage.js'
 import apiActions from '@/config/api.js'
 import { errorFormatter } from '@/config/utils.js'
-import crossNav from '@/config/crossNav.js'
 wepy.page({
   store,
   mixins: [initPage],
   data: {
-    webviewUrl: 'https://www.baidu.com',
-    code: '',
-    pickerDataIndex: 0,
-    pickerDataList: [
-      {
-        id: 0,
-        text: 'item1',
-        price: 0.1
-      },
-      {
-        id: 1,
-        text: 'item2',
-        price: 11564494
-      },
-      {
-        id: 2,
-        text: 'item3',
-        price: 64494.15654
-      }
-    ],
-    userInfo: {
-      encryptedData: '',
-      iv: ''
-    },
-    userPhone: {
-      encryptedData: '',
-      iv: ''
-    },
-    dialogShare: {
-      visible: false
-    }
   },
   computed: {
     ...mapState({ // 获取store里的state
-      openId: state => state.user.openId,
-      unionId: state => state.user.unionId,
-      formIdList: state => state.formIdList || []
+      statusBarHeight: state => state.system.statusBarHeight || 20
     })
   },
   methods: {
-    handleSetClipboard (e) {
-      const { content = '' } = e.currentTarget.dataset || {}
-      wx.setClipboardData({ data: content })
-    },
-    /**
-     * 处理表单提交事件
-     */
-    async handleFormSubmit (e) {
-      const formId = e.$wx.detail.formId
-      this.spliceFormId({ index: this.formIdList.length, formId })
-    },
-    async handleGetCode () {
-      try {
-        const { code = '' } = await wepy.wx.login() || {}
-        this.code = code
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    /**
-     * 获取用户信息授权回调
-     */
-    handleGetUserInfo (e) {
-      const { userInfo = {}, encryptedData = '', iv = '' } = e.$wx.detail || {}
-      console.log('handleGetUserInfo', e, 'userInfo', userInfo, 'encryptedData', encryptedData, 'iv', iv)
-      this.userInfo.encryptedData = encryptedData
-      this.userInfo.iv = iv
-    },
-    /**
-     * 获取用户手机号码授权回调
-     */
-    handleGetPhoneNumber (e) {
-      const { encryptedData, iv } = e.$wx.detail || {}
-      console.log('handleGetPhoneNumber', e, 'encryptedData', encryptedData, 'iv', iv)
-      this.userPhone.encryptedData = encryptedData
-      this.userPhone.iv = iv
-    },
-    /**
-     * 跳转到其他小程序
-     */
-    async handleNavToMiniProgram (e) {
-      const { sappType = '', pathType = '' } = e.currentTarget.dataset || {}
-      try {
-        await wepy.wx.navigateToMiniProgram({
-          appId: crossNav[sappType].appId,
-          path: crossNav[sappType].paths[pathType],
-          extraData: {
-            accessToken: this.accessToken
-          },
-          envVersion: 'trial' // develop trial release
-        })
-        // console.log(res)
-      } catch (error) {
-        // console.log(error)
-      }
-    },
-    handleChangePickerData (e) {
-      this.pickerDataIndex = e.$wx.detail.value
-    },
-    handleOpenDialogShare (e) {
-      this.dialogShare.visible = true
-    },
-    handleCloseDialogShare (e) {
-      this.dialogShare.visible = false
-    }
+
   },
-  onLoad () {
-  },
-  canvasIdErrorCallback (e) {
-    console.error(e.detail.errMsg)
-  },
-  async onShow () {
+  async onLoad () {
     wx.showLoading({ title: '正在加载...', mask: true })
     try {
-      await this.autoLogin(false) // 尝试自动登录，不强制要有登录态
-      // TODO 页面前置接口及初始化
-      this.spliceFormId({ formId: 'asdfasdfasdf' }) // 事例 添加formId 这个方法来自mixins
-      this.spliceFormId({ formId: '45623456345634' }) // 事例 添加formId 这个方法来自mixins
-      this.spliceFormId({ index: 1, deleteCount: 1 }) // 事例 删除formId 这个方法来自mixins
+      !this.accessToken && await this.autoLogin() // 尝试自动登录，不强制要有登录态
+      this.accessToken && !this.openId && await this.getUserInfo()
       wx.hideLoading()
     } catch (error) {
       console.log('home onShow', error)
@@ -223,4 +59,10 @@ wepy.page({
 @import '~@/assets/less/lib-mixins.less';
 .home {
 }
-</style> 
+.home__btn-demo {
+  position: absolute;
+  left: 30rpx;
+  top: 100rpx;
+  background-color: @c_btn_orange;
+}
+</style>

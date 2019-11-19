@@ -1,0 +1,234 @@
+<template>
+  <canvas class="canvas" canvas-id="firstCanvas" style="width:{{posterW}}px;height:{{posterH}}px;"></canvas>
+</template>
+
+<config>
+{
+  component: true,
+  usingComponents: {
+  }
+}
+</config>
+<script>
+import wepy from '@wepy/core'
+// import store from '@/store'
+// import { mapState, mapActions } from '@wepy/x'
+import { handleSplitText } from '@/config/utils.js'
+wepy.component({
+  // store,
+  properties: {
+    qrcode: {
+      type: String,
+      value: false
+    },
+    partyInfo: {
+      type: Object,
+      value: {}
+    }
+  },
+  data: {
+    ctx: null,
+    posterSrc: '',
+    posterW: 720,
+    posterH: 1280
+  },
+  computed: {
+  },
+  methods: {
+    async handleSavePoster (e) {
+      try {
+        await wepy.wx.saveImageToPhotosAlbum({ filePath: this.posterSrc })
+        wx.showToast({ duration: 3000, title: '保存成功，请到本地相册查看并转发分享', icon: 'none' })
+        this.handleClose()
+        console.log('handleSavePoster success', e)
+      } catch (error) {
+        wx.showToast({ duration: 3000, title: '保存失败', icon: 'none' })
+        console.log('handleSavePoster error', error)
+      }
+    },
+    drawWrapText ({ x = 0, y = 0, width = 300, lineHeight = 48, line = 9, size = 36, color = '#333', align = 'left', baseline = 'top', text = '', bold = false } = {}) {
+      if (text === '') {
+        return 0
+      }
+      this.ctx.save()
+      this.ctx.font = `normal ${bold ? 'bold' : 'normal'} ${size}px "PingFang SC",miui,system-ui,-apple-system,BlinkMacSystemFont,Helvetica Neue,Helvetica,sans-serif`
+      this.ctx.setFillStyle(color)
+      this.ctx.setTextAlign(align)
+      this.ctx.setTextBaseline(baseline)
+      let textArr = (handleSplitText(text) || []).map(item => Object.assign({}, item, { size: item.isHalfAngle ? (size / 2) : size }))
+      // console.log('drawWrapText textArr', textArr)
+      const lastLine = textArr.reduce(({ totalText = [], lineIndex = 0 } = {}, currentValue, currentIndex, arr) => {
+        currentValue.text = currentValue.text.replace(/[\r\n]/g, ' ')
+        let textStr = totalText.join('')
+        const { width: currentWidth } = this.ctx.measureText(textStr + currentValue.text)
+        if (currentWidth >= width) {
+          if (lineIndex < line) {
+            if (lineIndex === line - 1) {
+              textStr = totalText.filter((item, index) => index !== totalText.length - 1).join('') + '...'
+            }
+            this.ctx.fillText(textStr, x, y + (lineIndex * lineHeight))
+          }
+          // console.log('wrap', totalText, lineIndex)
+          return { totalText: [currentValue.text], lineIndex: lineIndex + 1 }
+        } else {
+          totalText.push(currentValue.text)
+          return { totalText, lineIndex }
+        }
+      }, { totalText: [], lineIndex: 0 })
+      const { totalText = [], lineIndex = 0 } = lastLine || {}
+      if (lineIndex + 1 <= line) {
+        this.ctx.fillText(totalText.join(''), x, y + (lineIndex * lineHeight))
+      }
+      // console.log('wrap', totalText, totalWidth, lineIndex)
+      const textHeight = lineHeight * (lineIndex + 1 > line ? line : lineIndex + 1)
+      // console.log('drawWrapText', 'lineIndex', lineIndex, 'textHeight', textHeight, 'text', text)
+      this.ctx.restore()
+      return textHeight
+    }
+  },
+  canvasIdErrorCallback (e) {
+    console.error(e.detail.errMsg)
+  },
+  async attached () {
+    // this.drawWrapText({ text: '活动描/述He.llo😯️的还是🏉️看🏏你的🥏️🔄啊啊🏐🔺🔛活动描述。活动描述活动描述,活动描述Hello😯️的还是🏉️看🏏你的🥏️🔄啊啊🏐🔺🔛活动描，述活动描述活动描述' })
+
+    const query = wx.createSelectorQuery()
+    const canvas = query.select('canvas')
+    console.log('query.select', canvas)
+    this.ctx = wx.createCanvasContext('firstCanvas', this.$wx)
+    // 画背景
+    this.ctx.drawImage('/statics/images/poster.png', 0, 0, this.posterW, this.posterH)
+
+    // 获取头像
+    let avatarSrc = ''
+    try {
+      const { tempFilePath } = await wepy.wx.downloadFile({ url: this.partyInfo.avatar }) || {}
+      console.log('tempFilePath', tempFilePath)
+      avatarSrc = tempFilePath
+    } catch (error) {
+      console.log(error)
+    }
+
+    // 画头像
+    const R = 38
+    const avatarX = 80
+    const avatarY = 210
+    this.ctx.save()
+    this.ctx.beginPath()
+    // this.ctx.setFillStyle('white')
+    this.ctx.arc(R + avatarX, R + avatarY, R, 0, 2 * Math.PI)
+    this.ctx.clip()
+    // this.ctx.fill()
+    this.ctx.drawImage('/statics/images/bg_default_avatar.png', avatarX, avatarY, R * 2, R * 2)
+    if (avatarSrc) {
+      this.ctx.drawImage(avatarSrc, avatarX, avatarY, R * 2, R * 2)
+    }
+    this.ctx.setLineWidth(2)
+    this.ctx.setStrokeStyle('white')
+    // this.ctx.setLineDash([10, 0])
+    this.ctx.stroke()
+    this.ctx.restore()
+
+    // 分享title
+    // const textW = this.posterW - 80 - 120
+    const textW = this.posterW - 180
+    const titleX = avatarX + R * 2 + 20
+    const titleY = avatarY + 20
+    const titleW = textW - R * 2 - 20
+    this.drawWrapText({ x: titleX, y: titleY, width: titleW + 30, lineHeight: 48, line: 2, size: 32, color: '#FFF', align: 'left', baseline: 'top', text: this.partyInfo.nickName + '组了一个Fun局', bold: false })
+    // 虚线
+    const dashY = avatarY + R * 2 + 30
+    this.ctx.save()
+    this.ctx.moveTo(80, dashY)
+    this.ctx.lineTo(this.posterW - 80, dashY)
+    this.ctx.setLineWidth(1)
+    this.ctx.setStrokeStyle('white')
+    // this.ctx.setLineDash([10, 10])
+    this.ctx.stroke()
+    this.ctx.restore()
+
+    // 活动标题
+    const partyTitleY = dashY + 30
+    // this.ctx.fillRect(80, partyTitleY, textW, 300)
+    const partyTitleH = this.drawWrapText({ x: 80, y: partyTitleY, width: textW, lineHeight: 48, line: 2, size: 36, color: '#FFF', align: 'left', baseline: 'top', text: this.partyInfo.title, bold: true })
+
+    // 活动描述
+    const partyDescY = partyTitleY + partyTitleH + 20
+    const partyDescH = this.drawWrapText({ x: 80, y: partyDescY, width: textW, lineHeight: 36, line: 2, size: 28, color: '#FFF', align: 'left', baseline: 'top', text: this.partyInfo.description, bold: false })
+
+    // 活动日期
+    const partyDateY = partyDescY + partyDescH + 20
+    const partyDateH = this.drawWrapText({ x: 80, y: partyDateY, width: textW, lineHeight: 40, line: 1, size: 32, color: '#FFF', align: 'left', baseline: 'top', text: this.partyInfo.dateFormat + ' ' + this.partyInfo.time, bold: false })
+
+    // 活动人均
+    const partyAmountY = partyDateY + partyDateH + 20
+    const partyAmountH = this.drawWrapText({ x: 80, y: partyAmountY, width: textW, lineHeight: 40, line: 1, size: 32, color: '#FFF', align: 'left', baseline: 'top', text: '人均 ￥' + (this.partyInfo.amount || 0), bold: false })
+
+    // 活动地址
+    const partyLoactionY = partyAmountY + partyAmountH + 20
+    const partyLoactionH = this.drawWrapText({ x: 80, y: partyLoactionY, width: textW, lineHeight: 40, line: 1, size: 32, color: '#FFF', align: 'left', baseline: 'top', text: this.partyInfo.locationName, bold: false })
+
+    // 活动地址
+    const partyAddressY = partyLoactionY + partyLoactionH
+    const partyAddressH = this.drawWrapText({ x: 80, y: partyAddressY, width: textW, lineHeight: 32, line: 1, size: 24, color: '#FFF', align: 'left', baseline: 'top', text: this.partyInfo.locationAddress, bold: false })
+
+    // 获取小程序码
+    const qrcodeX = 40
+    const qrcodeY = this.posterH - 165
+    const qrcodeW = 140
+    if (this.qrcode) {
+      this.ctx.drawImage(this.qrcode, qrcodeX, qrcodeY, qrcodeW, qrcodeW)
+    }
+    // 长按提示
+    const longPressX = qrcodeX + qrcodeW + 40
+    const longPressY = this.posterH - 165 + 30
+    const longPressH = this.drawWrapText({ x: longPressX, y: longPressY, width: 700, lineHeight: 40, line: 2, size: 32, color: '#333', align: 'left', baseline: 'top', text: '长按识别小程序码', bold: false })
+    // 长按提示
+
+    const shareTextX = longPressX
+    const shareTextY = longPressY + longPressH + 10
+    this.drawWrapText({ x: shareTextX, y: shareTextY, width: 700, lineHeight: 40, line: 2, size: 32, color: '#999', align: 'left', baseline: 'top', text: '加入ShareFun在线组局一起玩', bold: false })
+
+    this.ctx.draw(true, async () => {
+      console.log('draw callback')
+      wx.canvasToTempFilePath({
+        canvasId: 'firstCanvas',
+        x: 0,
+        y: 120,
+        width: this.posterW,
+        height: this.posterH - 120,
+        destWidth: this.posterW,
+        destHeight: this.posterH - 120,
+        quality: 1,
+        type: 'jpg',
+        success: res => {
+          console.log('canvasToTempFilePath success', res)
+          this.$wx.triggerEvent('complete', { tempFilePath: res.tempFilePath })
+        },
+        fail: error => {
+          console.log('canvasToTempFilePath error', error)
+        }
+      }, this.$wx)
+    })
+  }
+})
+</script>
+<style lang="less">
+@import '~@/assets/less/lib-base.less';
+@import '~@/assets/less/lib-mixins.less';
+.canvas {
+  position: fixed;
+  // position: absolute;
+  top: 9999px;
+  // top: 0;
+  left: 0;
+  z-index: -1;
+  // background-color: aqua;
+  width: 720px;
+  height: 1280px;
+  // opacity: 0.5;
+  // transform: scale(0.5);
+  transform-origin: 0 0;
+  // visibility: hidden;
+}
+</style>

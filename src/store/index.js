@@ -1,17 +1,27 @@
 import wepy from '@wepy/core'
 import Vuex from '@wepy/x'
 wepy.use(Vuex)
+
+let wxConfig = {}
+// eslint-disable-next-line no-undef
+try { wxConfig = __wxConfig || {} } catch (error) { }
+console.log('wxConfig', wxConfig)
+const envVersion = wxConfig.envVersion || 'release' // develop 工具或者真机 开发环境; trial 测试环境(体验版); release 正式环境
+console.log('process.env.APP_BUILD_TYPE', process.env.APP_BUILD_TYPE, 'envVersion', envVersion, process.env.APP_BUILD_TYPE !== 'auto' ? process.env.APP_BUILD_TYPE : (envVersion === 'release' ? 'production' : 'test'))
 const store = new Vuex.Store({
   state: {
-    // buildType: 'test', // test prerelease production
-    buildType: process.env.APP_BUILD_TYPE, // 构建模式 test prerelease production
+    buildType: process.env.APP_BUILD_TYPE !== 'auto' ? process.env.APP_BUILD_TYPE : (envVersion === 'release' ? 'production' : 'test'), // 构建模式 auto test production
     system: wx.getSystemInfoSync() || {}, // https://developers.weixin.qq.com/miniprogram/dev/api/base/system/system-info/wx.getSystemInfoSync.html
     user: {
-      accessToken: wx.getStorageSync('accessToken') || '',
-      thirdSession: wx.getStorageSync('thirdSession') || '',
-      enableAutoLogin: parseInt(wx.getStorageSync('enableAutoLogin')) >= 0 ? parseInt(wx.getStorageSync('enableAutoLogin')) : 1, // 自动登录开关
-      openId: wx.getStorageSync('openId') || '',
-      unionId: wx.getStorageSync('unionId') || ''
+      // accessToken: wx.getStorageSync('accessToken') || '',
+      accessToken: '',
+      openId: '',
+      unionId: '',
+      id: 0,
+      nickName: '',
+      avatar: '',
+      phone: '',
+      userName: ''
     },
     i18n: {
       language: wx.getStorageSync('language') || 'zh'
@@ -30,18 +40,15 @@ const store = new Vuex.Store({
     updateAccessToken ({ commit, dispatch, state }, accessToken) {
       commit('UPDATE_USER_ACCESS_TOKEN', accessToken)
     },
-    updateThirdSession ({ commit, dispatch, state }, thirdSession) {
-      commit('UPDATE_USER_THIRD_SESSION', thirdSession)
+    updateUserInfo ({ commit, dispatch, state }, userInfo) {
+      commit('UPDATE_USER_INFO', userInfo)
     },
-    updateAutoWechatLogin ({ commit, dispatch, state }, enableAutoLogin) {
-      commit('UPDATE_USER_ENABLE_AUTO_LOGIN', enableAutoLogin)
-    },
-    updateOpenId ({ commit, dispatch, state }, openId) {
-      commit('UPDATE_USER_OPEN_ID', openId)
-    },
-    updateUnionId ({ commit, dispatch, state }, unionId) {
-      commit('UPDATE_USER_UNION_ID', unionId)
-    },
+    // updateOpenId ({ commit, dispatch, state }, openId) {
+    //   commit('UPDATE_USER_OPEN_ID', openId)
+    // },
+    // updateUnionId ({ commit, dispatch, state }, unionId) {
+    //   commit('UPDATE_USER_UNION_ID', unionId)
+    // },
 
     // i18n
     initialLanguage ({ commit, dispatch, state }, language) {
@@ -69,32 +76,30 @@ const store = new Vuex.Store({
     // user
     UPDATE_USER_ACCESS_TOKEN (state, accessToken = '') {
       state.user.accessToken = accessToken
-      wx.setStorageSync('accessToken', accessToken)
+      // wx.setStorageSync('accessToken', accessToken)
     },
-    UPDATE_USER_THIRD_SESSION (state, thirdSession = '') {
-      state.user.thirdSession = thirdSession
-      wx.setStorageSync('thirdSession', thirdSession)
-    },
-    UPDATE_USER_ENABLE_AUTO_LOGIN (state, enableAutoLogin = 0) {
-      state.user.enableAutoLogin = enableAutoLogin
-      wx.setStorageSync('enableAutoLogin', enableAutoLogin)
-    },
-    UPDATE_USER_OPEN_ID (state, openId) {
-      // console.log('UPDATE_USER_OPEN_ID', openId)
-      state.user.openId = openId
-      wx.setStorageSync('openId', openId)
-    },
-    UPDATE_USER_UNION_ID (state, unionId) {
-      // console.log('UPDATE_USER_UNION_ID', unionId)
-      state.user.unionId = unionId
-      wx.setStorageSync('unionId', unionId)
-    },
-
+    
     // i18n
     UPDATE_I18N_LANGUAGE (state, language = 'zh') {
       state.i18n.language = language
       // wx.setStorageSync('language', language)
     },
+    UPDATE_USER_INFO (state, userInfo = {}) {
+      const info = Object.assign({}, ...Object.keys(state.user).map(key => Object.assign({ [key]: userInfo[key] || state.user[key] })))
+      console.log(info)
+      state.user = info
+      // wx.setStorageSync('accessToken', accessToken)
+    },
+    // UPDATE_USER_OPEN_ID (state, openId) {
+    //   // console.log('UPDATE_USER_OPEN_ID', openId)
+    //   state.user.openId = openId
+    //   // wx.setStorageSync('openId', openId)
+    // },
+    // UPDATE_USER_UNION_ID (state, unionId) {
+    //   // console.log('UPDATE_USER_UNION_ID', unionId)
+    //   state.user.unionId = unionId
+    //   // wx.setStorageSync('unionId', unionId)
+    // },
 
     // page
     UPDATE_PAGE_ROUTE (state, route = '') {

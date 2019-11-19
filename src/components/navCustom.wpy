@@ -1,8 +1,12 @@
 <template>
-  <view class="nav-custom" style="{{'top:'+ clientRect.top +'px'}}" wx:if="{{visible}}">
-    <button class="nav-custom__btn" bindtap="handleNavigate">
-      <view class="icon-back"></view>
+  <view class="nav-custom {{colorStyle}}" style="{{'top:'+ (clientRect.top || 30) +'px'}}">
+    <button class="nav-custom__btn pos-r" bindtap="handleNavigate" wx:if="{{showBack}}">
+      <view class="icon-back" style="border-color:{{colorStyle}}"></view>
     </button>
+    <navigator class="nav-custom__btn pos-r" open-type="reLaunch" url="/pages/home" wx:else>
+      <image class="icon-home" src="@/assets/images/icon_home_b.png" wx:if="{{colorStyle==='black'}}" mode="aspectFit"></image>
+      <image class="icon-home" src="@/assets/images/icon_home_w.png" wx:else mode="aspectFit"></image>
+    </navigator>
   </view>
 </template>
 
@@ -17,23 +21,29 @@ wepy.component({
   properties: {
     // webViewRedirectUrl: {
     //   type: String,
-    //   default: ''
+    //   value: ''
     // },
     // redirectUrl: {
     //   type: String,
-    //   default: ''
+    //   value: ''
     // },
     // webviewLogin: {
     //   type: String,
-    //   default: ''
+    //   value: ''
     // }
+    colorStyle: {
+      type: String,
+      value: 'black'
+    }
   },
   data: {
-    clientRect: {}
-    // visible: false
+    clientRect: {
+      top: 30
+    }
+    // showBack: false
   },
   computed: {
-    visible () {
+    showBack () {
       let flag = false
       try {
         // eslint-disable-next-line no-undef
@@ -76,15 +86,16 @@ wepy.component({
       }
     }
   },
-  attached () {
+  ready () {
     try {
-      this.clientRect = wx.getMenuButtonBoundingClientRect()
+      this.clientRect = wx.getMenuButtonBoundingClientRect() || {}
     } catch (error) {
       // console.log('getMenuButtonBoundingClientRect', error)
     }
+    console.log('clientRect.top', this.clientRect.top)
     // // eslint-disable-next-line no-undef
     // const pages = getCurrentPages()
-    // this.visible = pages.length > 1
+    // this.showBack = pages.length > 1
     // console.log('NavCustom', this.clientRect)
   }
 })
@@ -99,12 +110,16 @@ wepy.component({
   // border: 1px solid rgba(255, 255, 255, 0.2);
   // border: 1rpx solid #dedede;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.6);
-  // background-color: rgba(0, 0, 0, 0.2);
+  &.balck {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+  &.white {
+    background-color: rgba(0, 0, 0, 0.15);
+  }
 }
 .nav-custom__btn {
   height: 32px;
-  min-width: 32px;
+  width: 32px;
   background-color: transparent;
 }
 .icon-back {
@@ -118,5 +133,13 @@ wepy.component({
   top: 50%;
   left: calc(~'50% + 2px');
   transform: translate(-50%, -50%) rotate(-45deg);
+}
+.icon-home {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

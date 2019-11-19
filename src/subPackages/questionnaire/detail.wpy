@@ -1,0 +1,110 @@
+<template>
+  <view class="main-wrapper questionnaire-detail">
+    <view class="d-b pos-r">
+      <button bindtap="handleOpenDialogLogin" data-url="/subPackages/questionnaire/detail?questId={{item.id}}">
+        <text>{{item.questionnaire_title}}</text>
+      </button>
+    </view>
+    <dialogLogin v-if="dialogLogin.visible" visible="{{dialogLogin.visible}}" hint="需要登录后才能填写问卷" bind:close="handleCloseDialogLogin" bind:logined="handleLogined" data-url="{{dialogLogin.url}}"></dialogLogin>
+  </view>
+</template>
+<config>
+{
+  navigationBarTitleText: '问卷列表',
+  // navigationStyle: 'custom',
+  usingComponents: {
+    // tabBar: '~@/components/tabBar',
+    // customTabBar: '~@/custom-tab-bar/index',
+    dialogLogin: '~@/components/dialogLogin'
+  }
+}
+</config>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import { mapState, mapActions } from '@wepy/x'
+import initPage from '@/mixins/initPage.js'
+import apiActions from '@/config/api.js'
+import { errorFormatter } from '@/config/utils.js'
+wepy.page({
+  store,
+  mixins: [initPage],
+  data: {
+    queryList: {
+      page: 1,
+      size: 10,
+      total: 0,
+      list: []
+    },
+    currentQuestId: 1
+  },
+  computed: {
+    ...mapState({ // 获取store里的state
+      // buildType: state => state.buildType
+    })
+  },
+  methods: {
+    handleOpenDialogLogin2 (e) {
+      const { questId } = e.currentTarget.dataset || {}
+      console.log('handleOpenDialogLogin2 list', e, questId)
+    },
+    getList (page = 1, size = 200) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const { count = 0, results = [] } = await apiActions.questionnaire.list({
+            params: {
+              page: page,
+              page_size: size
+            }
+          }) || {}
+          resolve({ count, results })
+        } catch (error) {
+          reject(error)
+        }
+      })
+    }
+  },
+  async onShow () {
+    const { questId, scene = '' } = this.$wx.options
+    // 获取scene参数
+    let sceneObj = {}
+    if (scene) {
+      try {
+        sceneObj = Object.assign(...decodeURIComponent(scene).split('&').map(queryStr => queryStr.split('=')).filter(queryArr => queryArr.length === 2).map(queryArr => Object.assign({
+          [queryArr[0]]: queryArr[1]
+        })))
+      } catch (error) {
+        console.log('sceneObj error', error)
+      }
+    }
+    const {
+      questId: questIdScene = ''
+    } = sceneObj
+    this.questId = questId || parseInt(questIdScene) || null
+    // 没有partyId就去fun列表
+    if (!this.questId) {
+      await wx.reLaunch({ url: '/subPackages/questionnaire/list' })
+      return
+    }
+    wx.showLoading({ title: '正在加载...', mask: true })
+    try {
+      !this.accessToken && await this.autoLogin() // 尝试自动登录，不强制要有登录态
+      this.accessToken && !this.openId && await this.getUserInfo()
+      const { count: total = 0, results: list = [] } = await this.getList() || {}
+      this.queryList.total = total
+      this.queryList.list = list
+      wx.hideLoading()
+    } catch (error) {
+      console.log('questionnaire-detail onShow', error)
+      wx.hideLoading()
+      wx.showToast({ duration: 3000, title: errorFormatter(error, 'questionnaire-detail onShow'), icon: 'none' })
+    }
+  }
+})
+</script>
+<style lang="less">
+@import '~@/assets/less/lib-base.less';
+@import '~@/assets/less/lib-mixins.less';
+.questionnaire-detail {
+}
+</style>

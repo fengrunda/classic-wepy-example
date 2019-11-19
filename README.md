@@ -1,28 +1,28 @@
-# classic-wepy-example
+# wepy2-project
 
 ## Project setup
 ```
-yarn install
+npm install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-yarn run dev
+npm run dev
 ```
 
 ### Compiles and minifies for production
 ```
-yarn run build
+npm run build
 ```
 
 ### Compiles and minifies for production (测试环境)
 ```
-yarn run build-test
+npm run build-test
 ```
 
 ### Clean build files
 ```
-yarn run clean
+npm run clean
 ```
 
 ## 目录结构

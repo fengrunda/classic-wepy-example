@@ -42,14 +42,8 @@ module.exports = {
     // }),
     DefinePlugin({
       'process.env.APP_BUILD_TYPE': JSON.stringify(process.env.APP_BUILD_TYPE),
-      // TODO 设置版本号
-      'process.env.APP_BUILD_VERSION': JSON.stringify('4.8.0.0')
     })
-  ],
-  appConfig: {
-    noPromiseAPI: ['createSelectorQuery'],
-    buildType: process.env.APP_BUILD_TYPE // 环境变量
-  }
+  ]
 }
 if (prod) {
   // 压缩sass

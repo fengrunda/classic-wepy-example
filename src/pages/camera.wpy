@@ -1,0 +1,343 @@
+<template>
+  <view class="main-wrapper camera">
+    <!-- 自定义状态栏时需要自己添加返回按钮 -->
+    <!-- <navCustom></navCustom> -->
+    <block wx:if="{{!showPreview}}">
+      <camera class="camera__camera pos-f t-0 b-0 l-0 r-0 b-170" frame-size="large">
+        <view class="camera__custom-area__mask"></view>
+        <view class="camera__temp {{tempInfo.direction}} pos-a" style="width:{{tempInfo.tempW*2}}rpx;height:{{tempInfo.tempH*2}}rpx;">
+          <view wx:for="{{tempInfo.keepList}}" wx:key="{{index}}" class="camera__temp__keep-area pos-a" style="top:{{item.y*2}}rpx;left:{{item.x*2}}rpx;width:{{item.w*2}}rpx;height:{{item.h*2}}rpx;"></view>
+          <view wx:for="{{tempInfo.privacyList}}" wx:key="{{index}}" class="camera__temp__privacy-area pos-a" style="top:{{item.y*2}}rpx;left:{{item.x*2}}rpx;width:{{item.w*2}}rpx;height:{{item.h*2}}rpx;"></view>
+        </view>
+      </camera>
+      <!-- <cover-view class="pos-f t-0 b-0 l-0 r-0 b-170 zi-10 sclae-80" wx:if="{{tempInfo.direction === 'h'}}">
+        <cover-view class="camera__temp pos-a" style="width:{{tempInfo.tempH*2}}rpx;height:{{tempInfo.tempW*2}}rpx;">
+          <cover-view wx:for="{{tempInfo.keepList}}" wx:key="{{index}}" class="camera__temp__keep-area pos-a" style="top:{{item.x*2}}rpx;right:{{item.y*2}}rpx;width:{{item.h*2}}rpx;height:{{item.w*2}}rpx;"></cover-view>
+          <cover-view wx:for="{{tempInfo.privacyList}}" wx:key="{{index}}" class="camera__temp__privacy-area pos-a" style="top:{{item.x*2}}rpx;right:{{item.y*2}}rpx;width:{{item.h*2}}rpx;height:{{item.w*2}}rpx;"></cover-view>
+        </cover-view>
+      </cover-view>
+      <cover-view class="pos-f t-0 b-0 l-0 r-0 b-170 zi-10 sclae-80" wx:else>
+        <cover-view class="camera__temp {{tempInfo.direction}} pos-a" style="width:{{tempInfo.tempW*2}}rpx;height:{{tempInfo.tempH*2}}rpx;">
+          <cover-view wx:for="{{tempInfo.keepList}}" wx:key="{{index}}" class="camera__temp__keep-area pos-a" style="top:{{item.y*2}}rpx;left:{{item.x*2}}rpx;width:{{item.w*2}}rpx;height:{{item.h*2}}rpx;"></cover-view>
+          <cover-view wx:for="{{tempInfo.privacyList}}" wx:key="{{index}}" class="camera__temp__privacy-area pos-a" style="top:{{item.y*2}}rpx;left:{{item.x*2}}rpx;width:{{item.w*2}}rpx;height:{{item.h*2}}rpx;"></cover-view>
+        </cover-view>
+      </cover-view> -->
+      <view class="pos-f l-0 r-0 b-0 pl-30 pr-30 pb-50 zi-10 d-f">
+        <button bindtap="handleTakePhoto" class="btn-bar_b__btn fxg-1 fxsh-1 fxb-100 bdrs-8 fz-36 fw-b c-white">拍摄</button>
+      </view>
+      <canvas class="canvas" canvas-id="canvas"></canvas>
+    </block>
+    <block wx:else>
+      <view class="pos-f t-0 b-170 l-0 r-0 d-f jc-c ai-c">
+        <image src="{{imgInfo.base64}}" class="preview-img d-b" mode="aspectFit" bindtap="handlePreview"></image>
+      </view>
+      <view class="pos-f l-0 r-0 b-0 pl-30 pr-30 pb-50 zi-10 d-f">
+        <button bindtap="handleRetry" class="btn-bar_b__btn fxg-1 fxsh-1 fxb-100 bdrs-8 fz-36 fw-b c-black line mr-30">重拍</button>
+        <button bindtap="handleSubmit" class="btn-bar_b__btn fxg-1 fxsh-1 fxb-100 bdrs-8 fz-36 fw-b c-white">上传</button>
+      </view>
+    </block>
+  </view>
+</template>
+<config>
+{
+  navigationBarTextStyle: 'white',
+  navigationBarBackgroundColor: "#000",
+  backgroundColor: '#000',
+  navigationBarTitleText: 'camera',
+  // navigationStyle: 'custom',
+  usingComponents: {
+    navCustom: '~@/components/navCustom'
+  }
+}
+</config>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import initPage from '@/mixins/initPage.js'
+import apiActions from '@/config/api.js'
+import { mapState, mapActions } from '@wepy/x'
+import { errorFormatter } from '@/config/utils.js'
+wepy.page({
+  store,
+  mixins: [initPage],
+  data: {
+    tempInfo: {
+      direction: 'h', // v 垂直， h 水平
+      tempW: 566,
+      tempH: 394,
+      keepList: [
+        {
+          x: 566 - 100,
+          y: 394 - 100,
+          w: 100,
+          h: 100
+        },
+        {
+          x: 0,
+          y: 0,
+          w: 100,
+          h: 100
+        },
+        {
+          x: 14,
+          y: 93,
+          w: 494,
+          h: 240
+        },
+        {
+          x: 414,
+          y: 49,
+          w: 60,
+          h: 17
+        }
+      ],
+      privacyList: [
+        {
+          x: 0,
+          y: 394 - 100,
+          w: 100,
+          h: 100
+        },
+        {
+          x: 566 - 100,
+          y: 0,
+          w: 100,
+          h: 100
+        },
+        {
+          x: 44,
+          y: 34,
+          w: 60,
+          h: 17
+        },
+        {
+          x: 150,
+          y: 49,
+          w: 60,
+          h: 26
+        },
+        {
+          x: 414,
+          y: 34,
+          w: 60,
+          h: 15
+        }
+      ]
+    },
+    base64: '',
+    imgInfo: {
+      base64: '',
+      originFilePath: '',
+      outputFilePath: ''
+    },
+    showPreview: false,
+    shareInfo: {
+      title: '',
+      path: ''
+    }
+  },
+  computed: {
+    ...mapState({
+      statusBarHeight: state => state.system.statusBarHeight || 20
+    })
+  },
+  methods: {
+    handleRetry (e) {
+      this.showPreview = false
+      this.imgInfo.originFilePath = ''
+      this.imgInfo.outputFilePath = ''
+      this.imgInfo.base64 = ''
+    },
+    async handlePreview (e) {
+      try {
+        await wepy.promisify(wx.previewImage, wx)({
+          current: this.imgInfo.outputFilePath, // 当前显示图片的http链接
+          urls: [this.imgInfo.outputFilePath, this.imgInfo.originFilePath] // 需要预览的图片http链接列表
+        })
+      } catch (error) { }
+    },
+    async handleSubmit (e) {
+      wx.showLoading({ title: '正在加载...', mask: true })
+      try {
+        await apiActions.base.uploadBase64({
+          hostType: 1,
+          params: {
+            img_key: new Date().getTime(),
+            img_value: this.imgInfo.base64
+          }
+        })
+        wx.hideLoading()
+        wx.showToast({ duration: 3000, title: '上传成功', icon: 'success' })
+        this.handleRetry()
+      } catch (error) {
+        wx.hideLoading()
+        console.error('apiActions.base.uploadBase64', error)
+        wx.showToast({ duration: 3000, title: errorFormatter(error, 'apiActions.base.uploadBase64'), icon: 'none' })
+      }
+    },
+    async handleTakePhoto (e) {
+      const ctxCamera = wx.createCameraContext()
+      try {
+        const { tempImagePath } = await wepy.promisify(ctxCamera.takePhoto, ctxCamera)({ quality: 'high' })
+        // const tempImagePath = '/statics/images/poster.png'
+        const { tempFilePath, base64 } = await this.clipImg(tempImagePath)
+        this.imgInfo.originFilePath = tempImagePath
+        this.imgInfo.outputFilePath = tempFilePath
+        this.imgInfo.base64 = base64
+        this.showPreview = true
+      } catch (error) {
+        console.log('wx.previewImage', error)
+      }
+    },
+    clipImg (imagePath) {
+      return new Promise(async (resolve, reject) => {
+        const ctxCanvas = wx.createCanvasContext('canvas', this.$wx)
+        const fsm = wx.getFileSystemManager()
+        try {
+          const { width, height, path, orientation, type } = await wepy.promisify(wx.getImageInfo, wx)({ src: imagePath })
+          console.log('wx.getImageInfo', { width, height, path, orientation, type })
+          let imgW = this.tempInfo.tempW * 2 * 0.8 / 750 * width
+          let imgH = this.tempInfo.tempH / this.tempInfo.tempW * imgW
+          let imgX = (width - imgW) / 2
+          let imgY = (height - imgH) / 2
+          if (this.tempInfo.direction === 'h') {
+            // imgW = this.tempInfo.tempH * 2 * 0.8 / 750 * width
+            // imgH = this.tempInfo.tempW / this.tempInfo.tempH * imgW
+            imgX = (height - imgW) / 2
+            imgY = (width - imgH) / 2
+            ctxCanvas.translate(0, width)
+            ctxCanvas.rotate(-90 * Math.PI / 180)
+          }
+          ctxCanvas.drawImage(imagePath, 0, 0, width, height)
+          ctxCanvas.draw(true, async () => {
+            console.log('draw callback')
+            try {
+              const { tempFilePath } = await wepy.promisify(wx.canvasToTempFilePath, wx)({
+                canvasId: 'canvas',
+                x: imgX,
+                y: imgY,
+                width: imgW,
+                height: imgH,
+                // destWidth: this.tempInfo.tempW * 2,
+                // destHeight: this.tempInfo.tempH * 2,
+                quality: 1,
+                type: 'jpg'
+              }, this.$wx)
+              const base64 = 'data:image/jpeg;base64,' + fsm.readFileSync(tempFilePath, 'base64')
+              // console.log(base64)
+              resolve({ tempFilePath, base64 })
+            } catch (error) {
+              reject(error)
+            }
+          })
+        } catch (error) {
+          reject(error)
+        }
+      })
+    }
+  },
+  async onLoad () {
+    wx.showLoading({ title: '正在加载...', mask: true })
+    try {
+      // !this.accessToken && await this.autoLogin() // 尝试自动登录，不强制要有登录态
+      // this.accessToken && !this.openId && await this.getUserInfo()
+      wx.hideLoading()
+    } catch (error) {
+      wx.hideLoading()
+      wx.showToast({ duration: 3000, title: errorFormatter(error, 'home onload'), icon: 'none' })
+    }
+  },
+  onShareAppMessage ({ from = '', target = {}, webViewUrl = '' } = {}) {
+    console.log('onShareAppMessage', from, target, webViewUrl)
+    const { shareInfo: { title = 'camera', path = '/pages/camera', imageUrl = '' } = {} } = this.shareInfo || {}
+    // if (targetInfo) {
+    // shareInfo = Object.assign({}, ...Object.keys(shareInfo).map(key => Object.assign({ [key]: targetInfo[key] })))
+    // }
+    return { title, path, imageUrl }
+  }
+})
+</script>  
+<style lang="less">
+.camera {
+  background-color: #000;
+  .b-170 {
+    bottom: 170rpx;
+  }
+  .sclae-80 {
+    transform: scale(0.8);
+  }
+}
+.camera__camera {
+  width: 100%;
+  // left: 50%;
+  // transform: translateX(-50%);
+  // height: 600px;
+  // height: 100%;
+  // bottom: constant(safe-area-inset-bottom);
+  // bottom: env(safe-area-inset-bottom);
+  z-index: 0;
+}
+.camera__custom-area__mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  mask-image: linear-gradient(rgba(187, 48, 48) 0%, rgba(90, 192, 42) 100%),
+    linear-gradient(rgb(187, 48, 48) 0%, rgb(89, 192, 42) 100%);
+  mask-size: 100% 100%, 394rpx * 2 * 0.8 566rpx * 2 * 0.8;
+  mask-position: center center;
+  mask-repeat: no-repeat;
+  mask-composite: source-out;
+}
+.camera__custom-area {
+  width: 80%;
+  height: 0;
+  top: 60rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+}
+.btn-bar_b__btn {
+  background-color: rgb(52, 123, 255);
+  border-color: rgb(52, 123, 255);
+}
+.camera__temp {
+  top: 50%;
+  left: 50%;
+  // border: 1rpx solid blue;
+  transform: translate(-50%, -50%) scale(0.8);
+  transform-origin: 50% 50%;
+  &.h {
+    transform: translate(-50%, -50%) rotate(90deg) scale(0.8);
+  }
+}
+.camera__temp__keep-area {
+  border: 2rpx solid yellow;
+}
+.camera__temp__privacy-area {
+  border: 2rpx solid red;
+  background-color: red;
+}
+.canvas {
+  position: absolute;
+  top: 9999px;
+  // top: 0;
+  left: 0;
+  // position: fixed;
+  z-index: 0;
+  // background-color: aqua;
+  width: 3000px;
+  height: 3000px;
+  // opacity: 0.5;
+  // transform: translate(-50%,-50%) scale(0.5);
+  // transform-origin: 50% 50%;
+  // visibility: hidden;
+}
+.preview-img {
+  width: 80%;
+  height: 100%;
+}
+</style> 

@@ -1,0 +1,228 @@
+<template>
+  <view class="dialog-wine-detail d-f fxd-c jc-c ai-c {{(visible && openning)?'fade-in':''}} {{openning?'':'op-1'}} {{closing?'transition op-0':''}}" bindanimationstart="handleAnimationStart" bindanimationend="handleAnimationEnd" bindtransitionend="handleTransitionEnd">
+    <view class="dialog-mask" bindtap="handleClose"></view>
+    <view class="dialog-wine-detail__wrapper pos-r bdrs-16 d-f fxd-c">
+      <view class="dialog-wine-detail__wrapper__content fxg-1 fxsh-1 d-b pos-r pb-140 bz-bb pl-30 pr-30 pt-30">
+        <text class="d-b fz-36 fw-b ta-c">您还未登录哦</text>
+        <text class="d-b fz-28 ta-c c-gray mt-30 mb-30">{{hint}}</text>
+      </view>
+      <view class="pos-a d-f l-0 r-0 b-0 pl-30 pr-30 pb-30">
+        <button bindtap="handleClose" class="btn-bar_b__btn fxg-1 fxsh-1 fxb-100 bdrs-8 line mr-30 fz-32 fw-b c-black ta-c small">取消</button>
+        <button bindgetuserinfo="handleRegister" open-type="getUserInfo" class="btn-bar_b__btn fxg-1 fxsh-1 fxb-100 bdrs-8 fz-32 fw-b c-black small">登录</button>
+      </view>
+    </view>
+  </view>
+</template>
+
+<config>
+{
+  component: true,
+  usingComponents: {
+  }
+}
+</config>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import { mapState, mapActions } from '@wepy/x'
+import { errorFormatter } from '@/config/utils.js'
+import apiActions from '@/config/api.js'
+wepy.component({
+  store,
+  options: {
+    styleIsolation: 'apply-shared'
+  },
+  properties: {
+    visible: {
+      type: Boolean,
+      value: false
+    },
+    hint: {
+      type: String,
+      value: '需要登录后才能进行操作'
+    }
+  },
+  data: {
+    isVisiblePre: false,
+    closing: false,
+    openning: true
+  },
+  computed: {
+    ...mapState({ // 获取store里的state
+      platform: state => state.system.platform
+      // avatar: state => state.user.avatar,
+      // nickName: state => state.user.nickName
+    })
+  },
+  methods: {
+    ...mapActions({
+      updateAccessToken: 'updateAccessToken',
+      updateUserInfo: 'updateUserInfo'
+    }),
+    async handleRegister (e) {
+      const { encryptedData = '', iv = '' } = e.$wx.detail || {}
+      if (!encryptedData || !iv) {
+        return
+      }
+      wx.showLoading({ title: '正在加载...', mask: true })
+      try {
+        if (!this.accessToken) {
+          await this.userRegister()
+        }
+        if (this.accessToken && !this.openId) {
+          await this.getUserInfo()
+        }
+        wx.hideLoading()
+        wx.showToast({ duration: 3000, title: '登录成功', icon: 'success' })
+        this.$wx.triggerEvent('logined')
+      } catch (error) {
+        wx.hideLoading()
+        wx.showToast({ duration: 3000, title: errorFormatter(error, 'handleRegister'), icon: 'none' })
+      }
+    },
+    async userRegister (e) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const { code } = await wepy.wx.login()
+          const { userInfo = {}, encryptedData = '', iv = '' } = await wepy.wx.getUserInfo({ withCredentials: true })
+          const { token: accessToken = '' } = await apiActions.login.wxRegister({ params: { code, encrypted_data: encryptedData, iv } }) || ''
+          console.log('handleRegister', userInfo, accessToken)
+          this.updateAccessToken(accessToken)
+          resolve(accessToken)
+        } catch (error) {
+          reject(error)
+        }
+      })
+    },
+    getUserInfo () {
+      console.log('getUserInfo')
+      return new Promise(async (resolve, reject) => {
+        try {
+          const { info: { avatar_url: avatar = '', id = 0, mobile: phone = '', nick_name: nickName = '', open_id: openId = '', union_id: unionId = '', username: userName = '' } = {} } = await apiActions.user.getUserInfo() || {}
+          const userInfo = {
+            openId,
+            unionId,
+            id,
+            nickName,
+            avatar,
+            phone,
+            userName
+          }
+          console.log(userInfo)
+          this.updateUserInfo(userInfo)
+          resolve(userInfo)
+        } catch (error) {
+          console.log(error)
+          reject(error)
+        }
+      })
+    },
+    stopEvent (e) {
+      console.log('stopEvent', e)
+    },
+    handleClose (e) {
+      if (this.openning || this.closing) {
+        return
+      }
+      console.log('handleClose', e)
+      // this.$wx.triggerEvent('close', { value: false })
+      this.closing = true
+      this.openning = false
+    },
+    handleTransitionEnd (e) {
+      if (this.openning) {
+        return
+      }
+      console.log('handleTransitionend', e)
+      this.$wx.triggerEvent('close', { value: false })
+      this.closing = false
+      this.openning = true
+    },
+    handleAnimationStart (e) {
+      console.log('handleAnimationStart', e)
+      this.openning = true
+      this.closing = false
+    },
+    handleAnimationEnd (e) {
+      console.log('handleAnimationEnd', e)
+      this.openning = false
+    }
+  },
+  async attached () {
+    wx.showLoading({ title: '正在加载...', mask: true })
+    try {
+      wx.hideLoading()
+    } catch (error) {
+      console.error('wine-list onShow', error)
+      wx.hideLoading()
+      wx.showToast({ duration: 3000, title: errorFormatter(error, 'dialogWineDetail attached'), icon: 'none' })
+    }
+  }
+})
+</script>
+<style lang="less">
+@import '~@/assets/less/lib-base.less';
+@import '~@/assets/less/lib-mixins.less';
+.dialog-wine-detail {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  &.op-1 {
+    opacity: 1;
+  }
+  &.op-0 {
+    opacity: 0;
+  }
+  &.transition {
+    transition: opacity 0.3s ease-out;
+  }
+  .pb-140 {
+    padding-bottom: 140rpx;
+  }
+  .lc-2 {
+    .line-clamp(2, 40rpx);
+  }
+}
+.fade-in {
+  animation-duration: 0.3s;
+  animation-name: fadeIn;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.dialog-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+}
+.dialog-wine-detail__wrapper {
+  width: 80%;
+  max-height: 1000rpx;
+  background-color: #fff;
+}
+.dialog-wine-detail__wrapper__content {
+  overflow: auto;
+}
+.poster {
+  width: 100%;
+  height: 100%;
+}
+.btn-save {
+  background-color: @c_btn_orange;
+}
+</style>

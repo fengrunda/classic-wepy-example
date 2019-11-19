@@ -1,5 +1,6 @@
 import wepy from '@wepy/core'
 import store from '@/store'
+import twemoji from 'twemoji'
 /**
  * 错误信息字符化
  * @param {*} error 错误对象
@@ -147,10 +148,97 @@ class UrlClass {
     this.result[7] = value
   }
 }
+/**
+ * 获取scene参数
+ */
+const getAllSenceParams = (scene) => {
+  let sceneObj = {}
+  try {
+    sceneObj = Object.assign(...decodeURIComponent(scene).split('&').map(queryStr => queryStr.split('=')).filter(queryArr => queryArr.length === 2).map(queryArr => Object.assign({
+      [queryArr[0]]: queryArr[1]
+    })))
+  } catch (error) {
+    console.log('sceneObj error', error)
+  }
+  return sceneObj
+}
+/**
+ * 分类字符及emoji
+ * @param {String} text
+ */
+const handleSplitText = (text = '') => {
+  const emojiArr = []
+  twemoji.replace(text, (emoji, replaceText, index, text) => {
+    emojiArr.push(emoji)
+  })
+  const regex = new RegExp(emojiArr.join('|'))
+  const textArr = text.split(regex)
+  const newArr = textArr.reduce((total, currentValue, currentIndex, arr) => {
+    // console.log(total, currentValue, currentIndex, emojiArr[currentIndex])
+    if (emojiArr[currentIndex]) {
+      return total.concat(currentValue.split(''), emojiArr[currentIndex])
+    } else {
+      return total.concat(currentValue.split(''))
+    }
+  }, [])
+  // console.log('twemoji', twemoji, twemoji.parse('mfksjd🧦‍‍解放军想你想节省空间🥈🎗🧗🏼‍♂️🤢'))
+  // console.log('emojiArr', emojiArr, 'textArr', textArr, 'newArr', newArr)
+  // console.log('newArr', newArr)
+  const halfAngleRegex = new RegExp(/[\x00-\xff]/)
+  const analysisArr = newArr.map(text => Object.assign({ text, isHalfAngle: halfAngleRegex.test(text) }))
+  // console.log('analysisArr', analysisArr)
+  return analysisArr
+}
+/**
+ * canvas换行绘制文本
+ * @param {*} param0
+ */
+const drawWrapText = ({ ctx, x = 0, y = 0, width = 300, lineHeight = 48, line = 9, size = 36, color = '#333', align = 'left', baseline = 'top', text = '', bold = false } = {}) => {
+  if (text === '') {
+    return 0
+  }
+  ctx.save()
+  ctx.font = `normal ${bold ? 'bold' : 'normal'} ${size}px "PingFang SC",miui,system-ui,-apple-system,BlinkMacSystemFont,Helvetica Neue,Helvetica,sans-serif`
+  ctx.setFillStyle(color)
+  ctx.setTextAlign(align)
+  ctx.setTextBaseline(baseline)
+  let textArr = (handleSplitText(text) || []).map(item => Object.assign({}, item, { size: item.isHalfAngle ? (size / 2) : size }))
+  // console.log('drawWrapText textArr', textArr)
+  const lastLine = textArr.reduce(({ totalText = [], lineIndex = 0 } = {}, currentValue, currentIndex, arr) => {
+    currentValue.text = currentValue.text.replace(/[\r\n]/g, ' ')
+    let textStr = totalText.join('')
+    const { width: currentWidth } = ctx.measureText(textStr + currentValue.text)
+    if (currentWidth >= width) {
+      if (lineIndex < line) {
+        if (lineIndex === line - 1) {
+          textStr = totalText.filter((item, index) => index !== totalText.length - 1).join('') + '...'
+        }
+        ctx.fillText(textStr, x, y + (lineIndex * lineHeight))
+      }
+      // console.log('wrap', totalText, lineIndex)
+      return { totalText: [currentValue.text], lineIndex: lineIndex + 1 }
+    } else {
+      totalText.push(currentValue.text)
+      return { totalText, lineIndex }
+    }
+  }, { totalText: [], lineIndex: 0 })
+  const { totalText = [], lineIndex = 0 } = lastLine || {}
+  if (lineIndex + 1 <= line) {
+    ctx.fillText(totalText.join(''), x, y + (lineIndex * lineHeight))
+  }
+  // console.log('wrap', totalText, totalWidth, lineIndex)
+  const textHeight = lineHeight * (lineIndex + 1 > line ? line : lineIndex + 1)
+  // console.log('drawWrapText', 'lineIndex', lineIndex, 'textHeight', textHeight, 'text', text)
+  ctx.restore()
+  return textHeight
+}
 export {
   errorFormatter,
   redirectToLogin,
   navigateWithParams,
   formatAddress,
-  UrlClass
+  UrlClass,
+  getAllSenceParams,
+  handleSplitText,
+  drawWrapText
 }

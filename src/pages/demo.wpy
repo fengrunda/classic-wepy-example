@@ -1,92 +1,286 @@
 <template>
-  <div class="container">
-    <view class="form-group__item border_b d-b pl-30 pr-30">
-      <text class="form-group__item__text form-group__item__label d-b fxg-0 fxsh-0 mr-20">openId</text>
-      <view class="d-b">
-        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{openId}}" />
+  <view class="main-wrapper demo pb-164">
+    <view class="d-f bdb-1 mt-20 ml-30 mr-30">
+      <text class="d-ib fxg-0 fxsh-0">openId：</text>
+      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{openId}}</text>
+      <button bindtap="handleSetClipboard" data-content="{{openId}}" class="btn-copy pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
+    </view>
+    <view class="d-f bdb-1 mt-20 ml-30 mr-30">
+      <text class="d-ib fxg-0 fxsh-0">unionId：</text>
+      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{unionId}}</text>
+      <button bindtap="handleSetClipboard" data-content="{{unionId}}" class="btn-copy pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
+    </view>
+    <button bindtap="handleGetCode" class="d-b ml-30 mr-30 mt-20">getCode</button>
+    <view class="d-f bdb-1 mt-20 ml-30 mr-30">
+      <text class="d-ib fxg-0 fxsh-0">code：</text>
+      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{code}}</text>
+      <button bindtap="handleSetClipboard" data-content="{{code}}" class="btn-copy pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
+    </view>
+    <button bindgetuserinfo="handleGetUserInfo" open-type="getUserInfo" class="d-b ml-30 mr-30 mt-20">getUserInfo</button>
+    <view class="d-f bdb-1 mt-20 ml-30 mr-30">
+      <text class="d-ib fxg-0 fxsh-0">encryptedData：</text>
+      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{userInfo.encryptedData}}</text>
+      <button bindtap="handleSetClipboard" data-content="{{userInfo.encryptedData}}" class="btn-copy pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
+    </view>
+    <view class="d-f bdb-1 mt-20 ml-30 mr-30">
+      <text class="d-ib fxg-0 fxsh-0">iv：</text>
+      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{userInfo.iv}}</text>
+      <button bindtap="handleSetClipboard" data-content="{{userInfo.iv}}" class="btn-copy pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
+    </view>
+    <button bindgetphonenumber="handleGetPhoneNumber" open-type="getPhoneNumber" class="d-b ml-30 mr-30 mt-20">getPhoneNumber</button>
+    <view class="d-f bdb-1 mt-20 ml-30 mr-30">
+      <text class="d-ib fxg-0 fxsh-0">encryptedData：</text>
+      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{userPhone.encryptedData}}</text>
+      <button bindtap="handleSetClipboard" data-content="{{userPhone.encryptedData}}" class="btn-copy pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
+    </view>
+    <view class="d-f bdb-1 mt-20 ml-30 mr-30">
+      <text class="d-ib fxg-0 fxsh-0">iv：</text>
+      <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{userPhone.iv}}</text>
+      <button bindtap="handleSetClipboard" data-content="{{userPhone.iv}}" class="btn-copy pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
+    </view>
+    <form report-submit="{{true}}" bindsubmit="handleFormSubmit" class="d-b mt-20">
+      <button class="d-b ml-30 mr-30" formType="submit">getFormId</button>
+      <view class="d-f bdb-1 mt-20 ml-30 mr-30" wx:for="{{formIdList}}" wx:for-index="idx" wx:for-item="formId" wx:key="idx">
+        <text class="d-ib fxg-0 fxsh-0">formId{{idx}}：</text>
+        <text class="d-ib fxg-1 fxsh-1 ta-r wob-ba">{{formId}}</text>
+        <button bindtap="handleSetClipboard" data-content="{{formId}}" class="btn-copy pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">复制</button>
       </view>
-    </view>
-    <view class="form-group__item border_b d-b pl-30 pr-30">
-      <text class="form-group__item__text form-group__item__label d-b fxg-0 fxsh-0 mr-20">UnionId</text>
-      <view class="d-b">
-        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{unionId}}" />
+    </form>
+    <picker class="d-b pl-30 pr-30 mt-20" bindchange="handleChangePickerData" value="{{pickerDataIndex}}" range-key="text" range="{{pickerDataList}}">
+      <view class="d-f bdb-1">
+        <text class="form-group__item__text d-ib fxg-0 fxsh-0 mr-20">choose data</text>
+        <text class="form-group__item__text d-ib fxg-1 fxsh-1 ta-r wob-ba mr-20">{{pickerDataList[pickerDataIndex].text}} {{filter.formatAmount(pickerDataList[pickerDataIndex].price)}}</text>
+        <view class="icon-arrow_down fxg-0 fxsh-0 d-ib mt-40"></view>
       </view>
+    </picker>
+    <navigator class="d-b ml-30 mr-30 mt-40 mt-20 ta-c" url="/subPackages/pack1/page1?param1=123456">navToPage1</navigator>
+    <navigator class="d-b ml-30 mr-30 mt-40 mt-20 ta-c" url="/pages/webview?webviewUrl={{webviewUrl}}&webviewLogin=1">navToWebview</navigator>
+    <navigator class="d-b ml-30 mr-30 mt-40 mt-20 ta-c" url="/pages/camera">camera</navigator>
+    <button bindtap="handleNavToMiniProgram" data-sapp-type="carpark" data-path-type="home" class="d-b ml-30 mr-30 mt-40 mt-20">navToMiniProgram</button>
+    <button open-type="share" data-share-info="{{shareInfo}}" class="d-b ml-30 mr-30 mt-40 mt-20">分享给朋友</button>
+    <button bindtap="handleOpenDialogShare" class="d-b ml-30 mr-30 mt-40 mt-20">分享到朋友圈</button>
+    <button bindgetuserinfo="handleRegister" open-type="getUserInfo" class="d-b ml-30 mr-30 mt-40 mt-20">register</button>
+    <button bindtap="handleOpenDialogLogin" class="d-b ml-30 mr-30 mt-40 mt-20" data-url="/pages/home">login</button>
+    <view class="d-f bdb-1 mt-20 ml-30 mr-30">
+      <text class="d-ib fxg-0 fxsh-0">bill_no：</text>
+      <input type="text" value="{{billNo}}" bindinput="handleInput" data-input-type="billNo" class="d-ib fxg-1 fxsh-1 wob-ba" />
+      <button bindtap="handleWechatPay" class="btn-copy pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">支付</button>
     </view>
-    <view class="form-group__item border_b d-b pl-30 pr-30">
-      <text class="form-group__item__text form-group__item__label d-b fxg-0 fxsh-0 mr-20">accessToken</text>
-      <view class="d-b">
-        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{accessToken}}" />
-      </view>
+    <view class="d-f bdb-1 mt-20 ml-30 mr-30">
+      <text class="d-ib fxg-0 fxsh-0">emojiText：</text>
+      <input type="text" value="{{emojiText}}" bindinput="handleInput" data-input-type="emojiText" class="d-ib fxg-1 fxsh-1 wob-ba" />
+      <button bindtap="handleSplitText" class="btn-copy pl-20 pr-20 pt-10 pb-10 fxg-0 fxsh-0">解析</button>
     </view>
-    <view class="form-group__item border_b d-b pl-30 pr-30">
-      <text class="form-group__item__text form-group__item__label d-b fxg-0 fxsh-0 mr-20">thirdSession</text>
-      <view class="d-b">
-        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{thirdSession}}" />
-      </view>
-    </view>
-    <button class="d-b" bindtap="getCode">getCode</button>
-    <view class="form-group__item border_b d-f pl-30 pr-30">
-      <text class="form-group__item__text form-group__item__label d-ib fxg-0 fxsh-0 mr-20">code</text>
-      <view class="fxg-1 fxsh-1 d-f ai-c">
-        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{code}}" />
-      </view>
-    </view>
-    <view class="btn-bar_b padding">
-      <button bindtap="goToHome" class="btn-bar_b__btn bdrs-8 blue">返回首页</button>
-    </view>
-    <!-- <view class="form-container pos-r">
-      <form report-submit="{{true}}" catchsubmit="formSubmit2" class="pos-us">
-        <button bindtap="clickBtn" data-index="1" class="d-b btn pos-r" formType="submit">
-          <button bindtap="clickBtn" data-index="2" class="d-b btn pos-r" formType="submit">
-            <button bindtap="clickBtn" data-index="3" class="d-b btn pos-r" formType="submit">
-              <button bindtap="clickBtn" data-index="4" class="d-b last pos-a t-0 l-0 r-0 b-0" formType="submit">
-                getFormId*4
-              </button>
-            </button>
-          </button>
+    <view class="form-group__item d-f fxw-w pl-30 pr-30 pb-10">
+      <view wx:for="{{imageList}}" wx:key="index" wx:for-item="image" class="form-group__item__img-preview pos-r">
+        <button bindtap="handlePreviewImage" data-src="{{image}}" class="form-group__item__img-preview__btn-preview d-b pos-r">
+          <view class="form-group__item__img-preview__btn-preview__image d-b pos-r">
+            <image class="pos-a t-0 l-0 r-0 b-0" mode="aspectFill" src="{{image}}"></image>
+          </view>
         </button>
-      </form>
-    </view>
-    <view wx:for="{{formIdList}}" wx:key="{{index}}" class="form-group__item border_b d-f pl-30 pr-30">
-      <text class="form-group__item__text form-group__item__label d-ib fxg-0 fxsh-0 mr-20">formId{{index}}</text>
-      <view class="fxg-1 fxsh-1 d-f ai-c">
-        <input class="form-group__item__input fxg-1 fxsh-1 ta-l" type="text" value="{{item}}" />
+        <button bindtap="handleDeleteImage" data-index="{{index}}" class="pos-a t-0 r-0 pt-10 pb-10 pr-10 pl-10">
+          <image class="icon" src="@/assets/images/icon_remove.png"></image>
+        </button>
       </view>
-    </view> -->
-  </div>
+      <view class="form-group__item__img-preview pos-r" wx:if="{{imageList.length < imageMaxLength}}">
+        <button bindtap="handleChooseImage" class="form-group__item__img-preview__btn-chooser d-b pos-r">
+          <view class="form-group__item__img-preview__btn-chooser__icon-add d-b"></view>
+        </button>
+      </view>
+      <view wx:for="{{(imageList.length < imageMaxLength ? 2 : 3) - imageList.length %3}}" wx:key="index" class="form-group__item__img-preview pos-r"></view>
+    </view>
+    <button open-type="contact" class="d-b ml-30 mr-30 mt-40 mt-20 mb-30">客服</button>
+
+    <!-- <button bindtap="handleCreatePoster" class="d-b ml-30 mr-30 mt-40 mt-20">createPoster</button> -->
+    <!-- <canvas ref class="pos-r d-b canvas" canvas-id="firstCanvas"></canvas>
+    <image class="poster" wx:if="{{!!posterSrc}}" src="{{posterSrc}}"></image> -->
+
+    <!-- <tabBar></tabBar> -->
+    <!-- <dialogShare v-if="dialogShare.visible" visible="{{dialogShare.visible}}" qrcode="{{dialogShare.qrcode}}" bind:close="handleCloseDialogShare"></dialogShare> -->
+    <dialogLogin v-if="dialogLogin.visible" visible="{{dialogLogin.visible}}" hint="需要登录后才能填写问卷" bind:close="handleCloseDialogLogin" bind:logined="handleLogined" data-url="{{dialogLogin.url}}"></dialogLogin>
+  </view>
 </template>
+<wxs module="filter" src="../filters/index.wxs"></wxs>
 <config>
 {
-  navigationBarTitleText: 'WePY 2.0 Feature Demo',
-  // usingComponents: {}
+  navigationBarTitleText: 'wepy demo',
+  // navigationStyle: 'custom',
+  usingComponents: {
+    // tabBar: '~@/components/tabBar', 
+    // dialogShare: '~@/components/dialogShare',
+    dialogLogin: '~@/components/dialogLogin', 
+  }
 }
 </config>
 <script>
 import wepy from '@wepy/core'
 import store from '@/store'
-import initPage from '@/mixins/initPage.js'
-// import apiActions from '@/config/api.js'
 import { mapState, mapActions } from '@wepy/x'
+import initPage from '@/mixins/initPage.js'
+import apiActions from '@/config/api.js'
 import { errorFormatter } from '@/config/utils.js'
+import crossNav from '@/config/crossNav.js'
+import twemoji from 'twemoji'
 wepy.page({
   store,
   mixins: [initPage],
   data: {
+    webviewUrl: 'https://www.baidu.com',
     code: '',
-    formId: '',
-    formIdList: []
+    pickerDataIndex: 0,
+    pickerDataList: [
+      {
+        id: 0,
+        text: 'item1',
+        price: 0.1
+      },
+      {
+        id: 1,
+        text: 'item2',
+        price: 11564494
+      },
+      {
+        id: 2,
+        text: 'item3',
+        price: 64494.15654
+      }
+    ],
+    userInfo: {
+      encryptedData: '',
+      iv: ''
+    },
+    userPhone: {
+      encryptedData: '',
+      iv: ''
+    },
+    shareInfo: {
+      title: '首页自定义分享title',
+      path: '/pages/activityInfo'
+      // imageUrl: '/statics/images/icon_share_r.png'
+    },
+    dialogShare: {
+      qrcode: '',
+      visible: false
+    },
+    dialogLogin: {
+      visible: false
+    },
+    posterSrc: '',
+    ctx: null,
+    billNo: '',
+    emojiText: wx.getStorageSync('emojiText') || '',
+    halfAngleRegex: /[\x00-\xff]/g,
+    imageList: [],
+    imageMaxLength: 4
   },
   computed: {
-    ...mapState({
+    ...mapState({ // 获取store里的state
       openId: state => state.user.openId,
-      unionId: state => state.user.unionId
+      unionId: state => state.user.unionId,
+      formIdList: state => state.formIdList || []
     })
   },
   methods: {
-    ...mapActions({
-      spliceFormId: 'spliceFormId'
-    }),
-    async getCode () {
+    handlePreviewImage (e) {
+      // wx.showToast({ duration: 3000, title: 'preview img', icon: 'none' })
+      const { src = '' } = e.target.dataset || {}
+      // wx.showLoading({ title: translate(this.language)('loading'), mask: true })
+      try {
+        wepy.wx.previewImage({
+          current: src,
+          urls: this.imageList
+        })
+        // wx.hideLoading()
+      } catch (error) {
+        // wx.hideLoading()
+        // wx.showToast({ duration: 3000, title: errorFormatter(error, 'handlePreviewImage'), icon: 'none' })
+      }
+    },
+    handleDeleteImage (e) {
+      const { index = '' } = e.target.dataset || {}
+      this.imageList.splice(index, 1)
+      // wx.showToast({ duration: 3000, title: 'delete img', icon: 'none' })
+    },
+    async handleChooseImage (e) {
+      try {
+        const { tempFilePaths } = await wepy.wx.chooseImage({
+          sourceType: ['camera', 'album'],
+          sizeType: ['compressed', 'original'],
+          count: this.imageMaxLength
+        })
+        this.imageList = this.imageList.concat(tempFilePaths)
+      } catch (error) {
+      }
+    },
+    handleSplitText () {
+      return new Promise((resolve, reject) => {
+        const text = this.emojiText
+        const emojiArr = []
+        twemoji.replace(text, (emoji, replaceText, index, text) => {
+          emojiArr.push(emoji)
+        })
+        const regex = new RegExp(emojiArr.join('|'))
+        const textArr = text.split(regex)
+        const newArr = textArr.reduce((total, currentValue, currentIndex, arr) => {
+          console.log(total, currentValue, currentIndex, emojiArr[currentIndex])
+          if (emojiArr[currentIndex]) {
+            return total.concat(currentValue.split(''), emojiArr[currentIndex])
+          } else {
+            return total.concat(currentValue.split(''))
+          }
+        }, [])
+        // console.log('twemoji', twemoji, twemoji.parse('mfksjd🧦‍‍解放军想你想节省空间🥈🎗🧗🏼‍♂️🤢'))
+        console.log('emojiArr', emojiArr, 'textArr', textArr, 'newArr', newArr)
+        resolve(newArr)
+      })
+    },
+    handleInput (e) {
+      const key = e.currentTarget.dataset.inputType
+      this[key] = e.$wx.detail.value
+    },
+    async handleCreatePoster (e) {
+      console.log('handleCreatePoster')
+      const res = await wepy.wx.getImageInfo({ src: '/statics/images/logo.jpg' })
+      console.log(res)
+
+      // this.ctx.drawImage('/statics/images/poster.png', 0, 0, res.width, res.height)
+      this.ctx.drawImage('/statics/images/logo.jpg', 0, 0, res.width, res.height, 0, 0, res.width, res.height)
+      this.ctx.draw(false, async () => {
+        const { tempFilePath = '' } = await wepy.wx.canvasToTempFilePath({
+          canvasId: 'firstCanvas',
+          x: 0,
+          y: 0,
+          width: res.width,
+          height: res.height,
+          destWidth: res.width,
+          destHeight: res.height,
+          quality: 1,
+          type: 'png'
+        })
+        this.posterSrc = tempFilePath
+        const { height, width, type, path } = await wepy.wx.getImageInfo({ src: tempFilePath })
+        console.log({ height, width, type, path })
+      })
+    },
+    handleOpenDialogShare (e) {
+      this.dialogShare.visible = true
+    },
+    handleCloseDialogShare (e) {
+      console.log('handleCloseDialogShare', e)
+      this.dialogShare.visible = false
+    },
+    handleSetClipboard (e) {
+      const { content = '' } = e.currentTarget.dataset || {}
+      wx.setClipboardData({ data: content })
+    },
+    /**
+     * 处理表单提交事件
+     */
+    async handleFormSubmit (e) {
+      const formId = e.$wx.detail.formId
+      this.spliceFormId({ index: this.formIdList.length, formId })
+    },
+    async handleGetCode () {
       try {
         const { code = '' } = await wepy.wx.login() || {}
         this.code = code
@@ -94,53 +288,178 @@ wepy.page({
         console.error(error)
       }
     },
-    formSubmit (e) {
-      this.formId = e.$wx.detail.formId
-      console.log(e)
+    /**
+     * 获取用户信息授权回调
+     */
+    handleGetUserInfo (e) {
+      const { userInfo = {}, encryptedData = '', iv = '' } = e.$wx.detail || {}
+      console.log('handleGetUserInfo', e, 'userInfo', userInfo, 'encryptedData', encryptedData, 'iv', iv)
+      this.userInfo.encryptedData = encryptedData
+      this.userInfo.iv = iv
     },
-    formSubmit2 (e) {
-      this.formIdList.push(e.$wx.detail.formId)
-      console.log('formSubmit2', e.$wx.detail.formId)
+
+    /**
+     * 获取用户手机号码授权回调
+     */
+    handleGetPhoneNumber (e) {
+      const { encryptedData, iv } = e.$wx.detail || {}
+      console.log('handleGetPhoneNumber', e, 'encryptedData', encryptedData, 'iv', iv)
+      this.userPhone.encryptedData = encryptedData
+      this.userPhone.iv = iv
     },
-    clickBtn (e) {
-      console.log('index', e)
-      const query = wx.createSelectorQuery()
-      query.select()
+    /**
+     * 跳转到其他小程序
+     */
+    async handleNavToMiniProgram (e) {
+      const { sappType = '', pathType = '' } = e.currentTarget.dataset || {}
+      try {
+        await wepy.wx.navigateToMiniProgram({
+          appId: crossNav[sappType].appId,
+          path: crossNav[sappType].paths[pathType],
+          extraData: {
+            accessToken: this.accessToken
+          },
+          envVersion: 'trial' // develop trial release
+        })
+        // console.log(res)
+      } catch (error) {
+        // console.log(error)
+      }
+    },
+    handleChangePickerData (e) {
+      this.pickerDataIndex = e.$wx.detail.value
+    },
+    async handleRegister () {
+      try {
+        await this.userRegister()
+        const res = await apiActions.user.getUserInfo()
+        // console.log('handleRegister userInfo', res)
+        wx.showToast({ duration: 5000, title: JSON.stringify(res), icon: 'none' })
+      } catch (error) {
+        wx.showToast({ duration: 5000, title: errorFormatter(error, 'handleRegister'), icon: 'none' })
+      }
+    },
+    async handleWechatPay () {
+      try {
+        const { timeStamp, nonceStr, package: orderPackage, signType, paySign } = await apiActions.base.wechatPay({
+          params: {
+            bill_no: this.billNo
+          }
+        })
+        await wepy.wx.requestPayment({
+          timeStamp,
+          nonceStr,
+          package: orderPackage,
+          signType,
+          paySign
+        })
+        wx.showToast({ duration: 5000, title: '支付成功', icon: 'success' })
+      } catch (error) {
+        wx.showToast({ duration: 5000, title: errorFormatter(error, 'handleWechatPay'), icon: 'none' })
+      }
+    },
+    initQrcode (partyId) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const buffer = await apiActions.base.getQrcode({
+            params: {
+              path: '/pages/home',
+              scene: 'partyId=' + partyId
+            },
+            responseType: 'arraybuffer'
+          }) || {}
+          // this.posterSrc = 'data:image/png;base64,' + wx.arrayBufferToBase64(res)
+          // console.log('res', res)
+          const fsm = wx.getFileSystemManager()
+          const FILE_BASE_NAME = 'tmp_base64src'
+          // console.log('wx.env.USER_DATA_PATH', wx.env.USER_DATA_PATH)
+          const filePath = `${wx.env.USER_DATA_PATH}/${FILE_BASE_NAME}.png`
+          // console.log('filePath', filePath, buffer)
+          await wepy.promisify(fsm.writeFile, fsm)({
+            filePath,
+            data: buffer,
+            encoding: 'binary'
+          })
+          // const { tempFilePath } = await wepy.wx.getImageInfo({ url: this.avatar }) || {}
+          resolve(filePath)
+        } catch (error) {
+          console.log('writeFile', error)
+          reject(error)
+        }
+      })
+    },
+    getLocation (isShowHint = false) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const { authSetting = {} } = await wepy.wx.getSetting() || {}
+          if (!authSetting['scope.userLocation']) {
+            try {
+              await wepy.wx.authorize({ scope: 'scope.userLocation' })
+            } catch (error) {
+              console.error('authorize', error)
+              if (isShowHint) {
+                const { confirm } = await wepy.wx.showModal({
+                  title: '授权提示',
+                  content: `需要设置定位信息授权才能计算哪些活动离你比较近`,
+                  confirmText: '设置',
+                  cancelText: '拒绝'
+                })
+                if (!confirm) {
+                  return
+                }
+                wx.openSetting()
+              }
+              reject(error)
+              // return
+            }
+          }
+          const { latitude, longitude } = await wepy.wx.getLocation({ type: 'gcj02' }) || {}
+          // console.log('latitude', latitude, 'longitude', longitude)
+          resolve({ latitude, longitude })
+          // console.log('authSetting', authSetting)
+        } catch (error) {
+          console.error('getLocation', error)
+          reject(error)
+        }
+      })
     }
   },
   async onLoad () {
-    this.spliceFormId({ formId: 'asdfasdfasdf' })
-    this.spliceFormId({ formId: '45623456345634' })
-    this.spliceFormId({ index: 1, deleteCount: 1 })
+    // eslint-disable-next-line no-undef
+    console.log('__wxConfig ', __wxConfig)
+  },
+  async onShow () {
+    await this.getLocation(true)
     wx.showLoading({ title: '正在加载...', mask: true })
     try {
-      await this.autoLogin()
+      !this.accessToken && await this.autoLogin() // 尝试自动登录，不强制要有登录态
+      this.accessToken && !this.openId && await this.getUserInfo()
+      setTimeout(async () => {
+        this.dialogShare.qrcode = await this.initQrcode(1234)
+        // this.dialogShare.visible = true
+      }, 1000)
+      // await this.autoLogin() // 尝试自动登录，不强制要有登录态
+      // TODO 页面前置接口及初始化
+      // this.spliceFormId({ formId: 'asdfasdfasdf' }) // 事例 添加formId 这个方法来自mixins
+      // this.spliceFormId({ formId: '45623456345634' }) // 事例 添加formId 这个方法来自mixins
+      // this.spliceFormId({ index: 1, deleteCount: 1 }) // 事例 删除formId 这个方法来自mixins
+      // const res = await apiActions.user.getUserInfo()
+      // console.log(res)
       wx.hideLoading()
     } catch (error) {
+      console.log('home onShow', error)
       wx.hideLoading()
-      wx.showToast({ duration: 3000, title: errorFormatter(error, 'home onload'), icon: 'none' })
+      wx.showToast({ duration: 3000, title: errorFormatter(error, 'home onShow'), icon: 'none' })
     }
   }
 })
-</script>  
+</script>
 <style lang="less">
-.form-container {
-  height: 100rpx;
+@import '~@/assets/less/lib-base.less';
+@import '~@/assets/less/lib-mixins.less';
+.demo {
 }
-.btn {
-  // position: absolute;
-  width: 0;
-  height: 0;
-  background-color: rgba(97, 73, 73, 0.301);
-  overflow: visible;
-  padding: 0;
+.btn-copy {
+  font-size: 28rpx;
 }
-.last {
-  width: 500rpx;
-  height: 100rpx;
-  background-color: rgba(97, 73, 73, 0.301);
-  overflow: visible;
-  padding: 0;
-  // padding: 20rpx;
-}
-</style> 
+</style>

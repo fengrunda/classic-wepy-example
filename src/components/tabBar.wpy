@@ -1,62 +1,65 @@
 <template>
-  <!-- <cover-view class="tab-bar">
-    <cover-view class="tab-bar-border"></cover-view>
-    <cover-view wx:for="{{list}}" wx:key="index" class="tab-bar-item" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab">
-      <cover-image src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></cover-image>
-      <cover-view style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</cover-view>
-    </cover-view>
-  </cover-view> -->
   <view class="tab-bar">
     <view class="tab-bar-border"></view>
-    <view wx:for="{{list}}" wx:key="index" class="tab-bar-item" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab">
-      <image src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></image>
-      <view style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</view>
-    </view>
+    <block wx:for="{{list}}" wx:key="{{index}}">
+      <!-- <button wx:if="{{index === 2}}" bindgetuserinfo="handleRegister" open-type="getUserInfo" class="tab-bar-item" data-path="{{item.pagePath}}" data-index="{{index}}" disabled="{{selected === index}}">
+        <image src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></image>
+        <view style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</view>
+      </button> -->
+      <button class="tab-bar-item" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab" disabled="{{selected === index}}">
+        <image src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></image>
+        <view style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</view>
+      </button>
+    </block>
   </view>
 </template>
 <script>
 import wepy from '@wepy/core'
 import store from '@/store'
 import { mapState } from '@wepy/x'
-import { translate } from '@/i18n'
+import apiActions from '@/config/api.js'
+import initPage from '@/mixins/initPage.js'
+import { errorFormatter } from '@/config/utils.js'
 wepy.component({
   store,
+  mixins: [initPage],
   options: {
     styleIsolation: 'apply-shared'
   },
   data: {
-    selected: -1,
-    color: '#333',
-    selectedColor: '#41a3ff',
+    // selected: -1,
+    color: '#666',
+    selectedColor: '#DD5000',
     list: [
       {
         'pagePath': '/pages/home',
-        'iconPath': '/statics/images/icon_index_home_gray.png',
-        'selectedIconPath': '/statics/images/icon_index_home_blue.png',
-        'text': '首页'
+        'iconPath': '/statics/images/icon_share.png',
+        'selectedIconPath': '/statics/images/icon_share_r.png',
+        'text': 'share'
+      },
+      {
+        'pagePath': '/pages/activityList',
+        'iconPath': '/statics/images/icon_fun.png',
+        'selectedIconPath': '/statics/images/icon_fun_r.png',
+        'text': 'fun'
       },
       {
         'pagePath': '/pages/user',
-        'iconPath': '/statics/images/icon_index_my_gray.png',
-        'selectedIconPath': '/statics/images/icon_index_my_blue.png',
-        'text': '我的'
+        'iconPath': '/statics/images/icon_me.png',
+        'selectedIconPath': '/statics/images/icon_me_r.png',
+        'text': 'me'
       }
     ]
   },
   computed: {
     ...mapState({
-      route: state => '/' + state.page.route,
-      language: state => state.i18n.language
+      route: state => state.page.route,
+      accessToken: state => state.user.accessToken
     }),
     selected: {
       get () {
-        let index = this.list.findIndex(item => item.pagePath === this.route) || 0
-        try {
-          this.list[0].text = translate(this.language)('app__tabbar__item-0')
-          this.list[1].text = translate(this.language)('app__tabbar__item-1')
-        } catch (error) {
-          // console.error(error)
-        }
+        let index = this.list.findIndex(item => item.pagePath === ('/' + this.route)) || 0
+        console.log('selected', index, this.route)
         return index
       },
       set (value) {
@@ -68,15 +71,60 @@ wepy.component({
     }
   },
   methods: {
-    switchTab (e) {
-      // console.log('tabbar switchTab', e, this)
+    async switchTab (e) {
+      console.log('tabbar switchTab', e, this)
       const data = e.currentTarget.dataset
+      if (data.index !== 1) {
+        console.log('accessToken', this.accessToken)
+      }
       const url = data.path
-      wepy.wx.switchTab({ url })
+      try {
+        await wepy.wx.switchTab({ url })
+      } catch (e) {
+        await wepy.wx.navigateTo({ url })
+      }
       this.selected = data.index
       // this.$wx.setData({
       //   selected: data.index
       // })
+    },
+    // async userRegister (e) {
+    //   return new Promise(async (resolve, reject) => {
+    //     try {
+    //       const { code } = await wepy.wx.login()
+    //       const { userInfo = {}, encryptedData = '', iv = '' } = await wepy.wx.getUserInfo({ withCredentials: true })
+    //       const { token: accessToken = '' } = await apiActions.login.wxRegister({ params: { code, encrypted_data: encryptedData, iv } }) || ''
+    //       console.log('handleRegister', userInfo, accessToken)
+    //       this.updateAccessToken(accessToken)
+    //       resolve(accessToken)
+    //     } catch (error) {
+    //       reject(error)
+    //     }
+    //   })
+    // },
+    async handleRegister (e) {
+      console.log('handleRegister tabbar', e)
+      const { encryptedData = '', iv = '' } = e.$wx.detail || {}
+      if (!encryptedData || !iv) {
+        return
+      }
+      const { path: url, index } = e.$wx.currentTarget.dataset
+      try {
+        if (!this.accessToken) {
+          await this.userRegister()
+        }
+        try {
+          await wepy.wx.switchTab({ url })
+        } catch (e) {
+          await wepy.wx.navigateTo({ url })
+        }
+        this.selected = index
+        // const res = await apiActions.user.getUserInfo()
+        // console.log('handleRegister userInfo', res)
+        // wx.showToast({ duration: 5000, title: JSON.stringify(res), icon: 'none' })
+      } catch (error) {
+        wx.showToast({ duration: 5000, title: errorFormatter(error, 'handleRegister'), icon: 'none' })
+      }
     }
   },
   attached () {
@@ -117,15 +165,24 @@ wepy.component({
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  &[disabled] {
+    // cursor: not-allowed;
+    // pointer-events: none;
+    background-color: transparent !important;
+    opacity: 1 !important;
+  }
 }
 
-.tab-bar-item cover-image,.tab-bar-item image {
+.tab-bar-item cover-image,
+.tab-bar-item image {
   width: 27px;
   height: 27px;
 }
 
-.tab-bar-item cover-view,.tab-bar-item view {
+.tab-bar-item cover-view,
+.tab-bar-item view {
   // margin-top: 1px;
   font-size: 10px;
+  line-height: 1;
 }
 </style>

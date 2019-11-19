@@ -1,14 +1,17 @@
 /**
  * 金额格式化
+ * toLocaleString参数不生效
  * https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
  * @param {*} amount 金额
- * @param {String} style 格式化时使用的样式 decimal currency percent
- * @param {String} currency 在货币格式化中使用的货币符号 CNY USD EUR
  */
-var formatAmount = function (amount = 0, style = 'currency', currency = 'CNY') {
-  var amountNum = parseFloat(amount)
-  amountNum = amountNum >= 0 ? amountNum : 0
-  return amountNum.toLocaleString('zh', { minimumFractionDigits: 2, maximumFractionDigits: 8, style: style, currency: currency })
+var formatAmount = function (amount = 0) {
+  var integer = parseInt(amount) // 整数
+  var integerStr = integer.toLocaleString(integer) // 整数格式化
+  var decimals = parseFloat(amount) - integer // 小数
+  var decimalsLength = amount.toString().split('.').length === 2 ? amount.toString().split('.')[1].length : 0 // 小数位数
+  var decimalsStr = decimals.toFixed(decimalsLength < 2 ? 2 : decimalsLength > 6 ? 6 : decimalsLength)
+  // console.log(integer, integerStr, decimals, decimalsLength, decimalsStr)
+  return integerStr + (decimalsStr.split('.').length === 2 ? ('.' + decimalsStr.split('.')[1]) : '')
 }
 /**
  * 高亮关键字

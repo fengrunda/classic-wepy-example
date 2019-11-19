@@ -61,6 +61,10 @@
   overflow: hidden;
 }
 
+.of-a {
+  overflow: auto;
+}
+
 .mtLoop(@counter) when (@counter > = 0) {
   .mt-@{counter} {
     margin-top: unit(@counter, rpx) !important;
@@ -83,7 +87,7 @@
   }
   .mlLoop(( @counter - 10));
 }
-.mlLoop(40);
+.mlLoop(80);
 
 .mrLoop(@counter) when (@counter > = 0) {
   .mr-@{counter} {
@@ -91,7 +95,7 @@
   }
   .mrLoop(( @counter - 10));
 }
-.mrLoop(40);
+.mrLoop(80);
 
 .ml-a {
   margin-left: auto !important;
@@ -188,6 +192,10 @@
 
 .ta-r {
   text-align: right;
+}
+
+.lh-1 {
+  line-height: 1;
 }
 /*---------------------------------------------------文本 end -----------------------------------------------------*/
 /*---------------------------------------------------flex 容器 start -----------------------------------------------------*/

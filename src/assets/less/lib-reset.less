@@ -7,17 +7,18 @@ page {
   flex-direction: column;
   box-sizing: border-box;
   font-size: 28rpx;
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
+  // padding-bottom: constant(safe-area-inset-bottom);
+  // padding-bottom: env(safe-area-inset-bottom);
   -webkit-touch-callout: none;
   -webkit-overflow-scrolling: touch;
 }
 
 .input-placeholder {
-  color: #999;
+  color: @c_text_gray;
 }
+
 .textarea-placeholder {
-  color: #999;
+  color: @c_text_gray;
 }
 
 // checkbox .wx-checkbox-input{
@@ -53,10 +54,16 @@ button {
   padding: 0;
   margin: 0;
   background-color: transparent;
+
   &::after {
     border: 0;
   }
+
+  &[disabled] {
+    background-color: transparent !important;
+  }
 }
+
 .button-hover {
   opacity: 1;
   background-color: transparent;
@@ -64,6 +71,9 @@ button {
 }
 
 navigator {
+  box-sizing: border-box;
+  line-height: 1.5;
+  padding: 0;
   // filter: brightness(1);
   // transition: opacity .3s ease;
   margin: 0;
@@ -99,12 +109,14 @@ switch {
   &[checked] {
     .wx-switch-input {
       background-color: rgba(208, 73, 0, 0.5) !important;
+
       &::after {
         background-color: #d04900 !important;
       }
     }
   }
 }
+
 .wx-switch-input {
   width: 80rpx !important;
   height: 28rpx !important;
@@ -112,13 +124,16 @@ switch {
   border: 0 !important;
   background-color: #999 !important;
 }
+
 .wx-switch-input::before {
   width: 80rpx !important;
   height: 28rpx !important;
   padding: 0 !important;
   border: 0 !important;
   display: none;
-} // 白色挡板
+}
+// 白色挡板
+
 .wx-switch-input::after {
   top: 50% !important;
   margin-top: -20rpx !important;
@@ -128,4 +143,5 @@ switch {
   background-color: #fff !important;
   // box-shadow: 0 0 4rpx 0 rgba(0, 0, 0, 1) !important;
   // box-shadow: none !important;
-} //中间小圆球
+}
+//中间小圆球

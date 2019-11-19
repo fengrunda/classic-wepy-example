@@ -7,73 +7,88 @@
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+// 项目定制化全局ui start ------------------------------------------------------------
+.op-54 {
+  opacity: .54;
 }
 
-.pb-156 {
-  padding-bottom: 156rpx;
+.pb-164 {
+  padding-bottom: 164rpx;
 }
 
-.pb-196 {
-  padding-bottom: 196rpx;
+.cwLoop(@counter) when (@counter > = 0) {
+  .c-white_@{counter} {
+    color: rgba(255, 255, 255,@counter / 100) !important;
+  }
+  .cwLoop(( @counter - 20));
 }
+.cwLoop(100);
 
-.pb-116 {
-  padding-bottom: 116rpx;
+.cbLoop(@counter) when (@counter > = 0) {
+  .c-black_@{counter} {
+    color: rgba(0, 0, 0,@counter / 100) !important;
+  }
+  .cbLoop(( @counter - 20));
 }
+.cbLoop(100);
 
-.color_main-blue {
-  color: @c_main_blue;
-}
-
-.color_text-333 {
-  color: #333;
-}
-
-.color_text-666 {
-  color: #666;
-}
-
-.color_text-999 {
-  color: #999;
-}
-
-.color_text-blue {
-  color: @c_text_blue;
-}
-
-.color_text-red {
-  color: @c_text_red;
-}
-
-.border_t {
+.bdt-1 {
   border-top: 1rpx solid @c_border_gray;
 }
 
-.border_b {
+.bdb-1 {
   border-bottom: 1rpx solid @c_border_gray;
 }
 
-// textarea的placeholder有样式兼容问题，需要区分是否ios
-.form-group__item__textarea {
-  box-sizing: border-box;
-  line-height: 40rpx;
-  min-height: 120rpx;
-  margin-top: 28rpx;
-  margin-bottom: 28rpx;
-  width: 100%;
-  // background-color: rgba(43, 156, 147, 0.548);
-  vertical-align: top;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  &.ios {
-    // background-color: rgba(156, 103, 43, 0.548);
-    margin-top: 15rpx;
-    margin-bottom: 15rpx;
-    min-height: 146rpx;
-  }
+.bdrs-8 {
+  border-radius: 8rpx;
 }
 
+.bdrs-16 {
+  border-radius: 16rpx;
+}
+
+.icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.icon-alert {
+  // .imgSize('../images/icon_alert.png',0.5);
+  // width: @imgW;
+  // height: @imgH;
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.custom-title {
+  height: 44px;
+  line-height: 44px;
+  top: 52rpx;
+  font-size: 18px;
+  font-weight: bold;
+  // background-color: rgba(255, 255, 255, 0.315);
+}
+// 项目定制化全局ui end ------------------------------------------------------------
+// 全局icon start ------------------------------------------------------------
+.icon-arrow_r {
+  width: 48rpx;
+  height: 48rpx;
+  background-image: @img_icon_arrow_r;
+  background-size: 32rpx 32rpx;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.icon-arrow_l {
+  .icon-arrow_r;
+  transform: rotate(180deg);
+}
+// 全局icon end ------------------------------------------------------------
+// 自定义tabbar start ------------------------------------------------------------
 .tab-bar {
   background-color: #fff;
   border-bottom: 1rpx solid @c_border_gray;
@@ -111,3 +126,258 @@
     background-color: #333;
   }
 }
+// 自定义tabbar end ------------------------------------------------------------
+// 底部按钮 start ------------------------------------------------------------
+.nav-bar_b {
+  @triangleW: 24rpx;
+  @triangleH: 24rpx;
+
+  &__bg_t {
+    height: 0;
+    // bottom: 0;
+    border-top: 0 solid transparent;
+    border-left: @triangleW solid transparent;
+    border-right: @triangleW solid transparent;
+    border-bottom: @triangleH solid @c_main_yellow;
+  }
+
+  &__bg_b {
+    background-color: @c_main_yellow;
+    height: 144rpx - @triangleH;
+  }
+}
+
+.nav-bar_b__btn {
+  &.disabled {
+    opacity: .54;
+  }
+}
+
+.nav-bar_b__btn__text {
+  line-height: 60rpx;
+}
+// 底部按钮 end ------------------------------------------------------------
+// 底部按钮2 start ------------------------------------------------------------
+.btn-bar_b {}
+
+.btn-bar_b__btn {
+  border: 4rpx solid @c_main_yellow;
+  height: 92rpx;
+  line-height: 88rpx;
+  box-shadow: 0 2rpx 6rpx 0 rgba(0,0,0,.3);
+  background-color: @c_main_yellow;
+
+  &.line {
+    background-color: #fff;
+  }
+
+  &.small {
+    height: 72rpx;
+    line-height: 68rpx;
+  }
+}
+
+.btn-bar_b__snack-bar {
+  border: 4rpx solid #000;
+  height: 92rpx;
+  line-height: 88rpx;
+  box-shadow: 0 5rpx 10rpx 0 rgba(0,0,0,.3);
+  background-color: #000;
+}
+// 底部按钮2 end ------------------------------------------------------------
+// 表单组件 start ------------------------------------------------------------
+.form-group {}
+
+.form-group__item {
+  position: relative;
+  min-height: 112rpx;
+
+  &.white {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+
+  &.gray {
+    background-color: #f5f5f5;
+  }
+}
+
+.form-group__item__label {
+  font-size: 24rpx;
+  line-height: 24rpx;
+  color: @c_text_gray;
+
+  &.t-5 {
+    top: 5rpx;
+  }
+
+  &.t-10 {
+    top: 10rpx;
+  }
+}
+
+.form-group__item__input {
+  caret-color: @c_main_yellow !important;
+  height: 40rpx;
+  // margin-top: 28rpx;
+  line-height: 40rpx;
+  // margin-bottom: 28rpx;
+  padding: 0;
+}
+
+.form-group__item__textarea {
+  font-size: 32rpx;
+  caret-color: @c_main_yellow !important;
+  box-sizing: border-box;
+  line-height: 40rpx;
+  margin-top: 36rpx;
+  margin-bottom: 36rpx;
+  width: 100%;
+  // background-color: rgba(43, 156, 147, 0.548);
+  vertical-align: top;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  min-height: 40rpx;
+
+  &.ios {
+    // background-color: rgba(156, 103, 43, 0.548);
+    margin-top: 23rpx;
+    margin-bottom: 23rpx;
+    min-height: 40rpx + 26rpx;
+    margin-left: -10rpx;
+    margin-right: -10rpx;
+  }
+
+  &.row-2 {
+    min-height: 40rpx * 2;
+
+    &.ios {
+      min-height: 40rpx * 2 + 26rpx;
+    }
+  }
+
+  &.row-3 {
+    min-height: 40rpx * 3;
+
+    &.ios {
+      min-height: 40rpx * 3 + 26rpx;
+    }
+  }
+}
+
+.form-group__item__placeholder {
+  font-size: 32rpx;
+  color: @c_text_gray;
+}
+
+.form-group__item__text {
+  font-size: 32rpx;
+  line-height: 40rpx;
+  min-height: 40rpx;
+  margin-top: 36rpx;
+  margin-bottom: 36rpx;
+  box-sizing: border-box;
+
+  &.lc-1 {
+    .line-clamp(1, 40rpx);
+  }
+
+  &.lc-2 {
+    .line-clamp(2, 40rpx);
+  }
+}
+
+.form-group__picker__icon-arrow_d {
+  width: 64rpx;
+  height: 64rpx;
+}
+// 表单组件 end ------------------------------------------------------------
+// 列表组件 end ------------------------------------------------------------
+.list__item__img {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 16rpx;
+  border: 1rpx solid @c_border_gray;
+  background-color: #fff;
+  background-image: @img_bg_default_wine;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  &.small {
+    width: 88rpx;
+    height: 88rpx;
+  }
+}
+
+.list__item__icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+// 列表组件 end ------------------------------------------------------------
+// 图片上传组件 start ------------------------------------------------------------
+.form-group__item__img-preview {
+  flex: 1 1 25%;
+  margin-left: 10rpx;
+  margin-bottom: 10rpx;
+
+  &:nth-of-type(3n + 1) {
+    // background-color: rgba(172, 41, 41, 0.664);
+    margin-left: 0;
+  }
+}
+
+.form-group__item__img-preview__btn-chooser,
+.form-group__item__img-preview__btn-preview {
+  border-radius: 0;
+  padding: 0;
+  background-color: transparent;
+  // background-color: rgba(31, 143, 74, 0.637);
+}
+
+.form-group__item__img-preview__btn-chooser__icon-add,
+.form-group__item__img-preview__btn-preview__image {
+  width: 100% !important;
+  padding-top: 100% !important;
+  height: 0 !important;
+  background-image: @img_bg_default_wine;
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-radius: 8rpx;
+  overflow: hidden;
+
+  image {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+.form-group__item__img-preview__btn-chooser__icon-add {
+  box-sizing: border-box;
+  border: 1rpx solid @c_border_gray;
+  border-radius: 8rpx;
+  position: relative;
+  padding-top: calc(~'100% - 2px');
+  background-image: none;
+
+  &::after,
+  &::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #d9d9d9;
+    content: '';
+  }
+
+  &::before {
+    width: 2px;
+    height: 60%;
+  }
+
+  &::after {
+    height: 2px;
+    width: 60%;
+  }
+}
+// 图片上传组件 end ------------------------------------------------------------
